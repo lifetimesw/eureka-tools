@@ -1,0 +1,84 @@
+/* 消息 */
+.stone-message {
+  position: absolute;
+  right: 30px;
+  top: 80px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7em 1em;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #595959;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 15%);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out,
+    top 0.4s ease-out;
+  text-align: center;
+  pointer-events: all;
+
+  .message-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+
+    i {
+      .message-icon-info {
+        fill: #1890ff;
+      }
+
+      .message-icon-success {
+        fill: #52c41a;
+      }
+
+      .message-icon-error {
+        fill: #f5222d;
+      }
+
+      .message-icon-warning {
+        fill: #faad14;
+      }
+    }
+  }
+
+  .message-text {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+    margin-left: 0.5em;
+  }
+
+  .message-option {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 0.5em;
+    vertical-align: middle;
+    cursor: pointer;
+
+    i {
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #ff7c75;
+        transition: color 0.2s ease;
+      }
+    }
+  }
+}
+
+.stone-message-fade-enter {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.stone-message-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}

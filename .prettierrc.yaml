@@ -1,0 +1,16 @@
+tabWidth: 2 # 缩进空格
+printWidth: 150 # 强制换行长度
+semi: false # 句末分号
+singleQuote: true # 单引号
+quoteProps: consistent # 对象属性名添加引号，一个有全部有
+bracketSpacing: true # 大括号之间空格
+bracketSameLine: true # dom节点末尾 > 在同一行
+endOfLine: lf # EOF换行符类型
+trailingComma: es5 # 多行逗号分隔，最后一行加逗号
+arrowParens: always # 单参数箭头函数是否需要加小括号
+htmlWhitespaceSensitivity: css # 去除html元素中的多余空格
+singleAttributePerLine: false
+overrides:
+  - files: "*.data.ts"
+    options:
+      printWidth: 500

@@ -1,0 +1,52 @@
+.stone-title-tooltip {
+  position: fixed;
+  padding: 0.5em 1em;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  max-width: 240px;
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+  z-index: 9999;
+  &.tooltip-interactive {
+    pointer-events: auto;
+  }
+
+  .stone-title-tooltip-arrow {
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+    &.right {
+      top: 50%;
+      left: -10px;
+      transform: translateY(-50%);
+      border-color: transparent rgba(0, 0, 0, 0.8) transparent transparent;
+    }
+
+    &.left {
+      top: 50%;
+      right: -10px;
+      transform: translateY(-50%);
+      border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
+    }
+
+    &.top {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    }
+
+    &.bottom {
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+    }
+  }
+}

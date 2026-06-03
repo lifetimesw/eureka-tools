@@ -1,0 +1,72 @@
+$icon-path: '@renderer/assets/images/icons/' !default; // 图标文件夹路径
+$icon-default-size: 20px !default; // 默认尺寸
+$icon-size-unit: px !default; // 尺寸单位
+
+// 预设尺寸
+$icon-sizes: (
+  s: 16,
+  m: 20,
+  l: 24,
+  xl: 28,
+  xxl: 32,
+) !default;
+
+$icons: (
+  ff14: 'ff14.png',
+  eureka: 'eureka.png',
+  hq: 'hq.png',
+
+  eureka-blizzards: 'eureka-blizzards.png',
+  eureka-fairSkies: 'eureka-fairSkies.png',
+  eureka-fog: 'eureka-fog.png',
+  eureka-gales: 'eureka-gales.png',
+  eureka-gloom: 'eureka-gloom.png',
+  eureka-heatWaves: 'eureka-heatWaves.png',
+  eureka-showers: 'eureka-showers.png',
+  eureka-snow: 'eureka-snow.png',
+  eureka-thunder: 'eureka-thunder.png',
+  eureka-thunderstorms: 'eureka-thunderstorms.png',
+  eureka-umbralWind: 'eureka-umbralWind.png',
+
+  eureka-adaptation: 'adaptation.png',
+  eureka-mutation: 'mutation.png',
+
+  element-fire: 'fire.png',
+  element-water: 'water.png',
+  element-wind: 'wind.png',
+  element-lightning: 'lightning.png',
+  element-earth: 'earth.png',
+  element-ice: 'ice.png',
+);
+
+@mixin icon-base {
+  display: inline-block;
+  flex-shrink: 0;
+  width: $icon-default-size;
+  height: $icon-default-size;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  vertical-align: middle;
+  line-height: 1;
+}
+@mixin icon-size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+.icon {
+  @include icon-base;
+
+  // 预设尺寸变体
+  @each $name, $size in $icon-sizes {
+    &-#{$name} {
+      @include icon-size(#{$size}#{$icon-size-unit});
+    }
+  }
+}
+@each $name, $file in $icons {
+  .icon-#{$name} {
+    background-image: url($icon-path + $file);
+  }
+}
