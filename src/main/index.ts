@@ -7,7 +7,7 @@ function createWindow(): void {
   const savedConfig = StoreHandler.getWindowConfig()
   const mainWindow = new BrowserWindow({
     minWidth: 1000,
-    minHeight: 760,
+    minHeight: 700,
     width: savedConfig?.width || 1024,
     height: savedConfig?.height || 768,
     x: savedConfig?.x,
