@@ -23,7 +23,7 @@ const columns = [
   { key: 'triggerCondition', title: '触发方式' },
   { key: 'normalRewards', title: '通常奖励' },
   { key: 'specialRewards', title: '特殊奖励' },
-  { key: 'triggerTime', title: '触发状态' },
+  { key: 'triggerTime', title: '触发状态', class: 'w-14em' },
 ]
 
 const triggerMap = reactive<Record<EurekaAreaId, Record<number, string>>>({
@@ -186,7 +186,7 @@ onMounted(async () => {
           :key="index"
           v-title:bottom.interactive="getWeatherTitle(item, index)"
           class="cursor-pointer icon icon-l rounded-full"
-          :class="[`icon-eureka-${item.weather}`, index === 0 ? 'b-2 b-solid b-orange-600' : '']">
+          :class="[`icon-eureka-${item.weather}`, index === 0 ? 'b-2 b-solid b-orange-500' : '']">
         </i>
       </div>
       <button class="normal-button" @click="copyHistory(true)" v-title:bottom="triggeredHistory">复制已触发</button>
@@ -201,13 +201,14 @@ onMounted(async () => {
           </div>
         </template>
         <template #default="{ row, value }">
-          <span :class="{ 'text-#176b48': row.triggerTime, 'fw-bold': row.triggerTime }">{{ value }}</span>
+          <span :class="{ 'text-orange-500': row.triggerTime }">{{ value }}</span>
         </template>
         <template #name="{ row }">
-          <span :class="{ 'text-#176b48': row.triggerTime, 'fw-bold': row.triggerTime }">{{ row.title + '——' + row.name }}</span>
+          <p class="text-3" :class="{ 'text-orange-500': row.triggerTime }" v-if="row.title">【{{ row.title }}】</p>
+          <p class="fw-bold" :class="{ 'text-orange-500': row.triggerTime }">{{ row.name }}</p>
         </template>
         <template #aliases="{ row, value }">
-          <span :class="{ 'text-#176b48': row.triggerTime, 'fw-bold': row.triggerTime }">{{ value.join('、') }}</span>
+          <span :class="{ 'text-orange-500': row.triggerTime }">{{ value.join('、') }}</span>
         </template>
         <template #triggerCondition="{ row, value }">
           <p class="f-center">
@@ -219,7 +220,8 @@ onMounted(async () => {
         </template>
         <template #normalRewards="{ value }">
           <p v-for="(item, index) in value" :key="index" class="f-center">
-            <img class="mr-1 icon icon-s" :src="getIcon(item.icon)" />{{ item.name }} * {{ item.quantity }}
+            <!-- <img class="mr-1 icon icon-s" :src="getIcon(item.icon)" />{{ item.name }} * {{ item.quantity }} -->
+            <img class="mr-1 icon icon-s" :src="getIcon(item.icon)" v-title:left="item.name" /> * {{ item.quantity }}
           </p>
         </template>
         <template #specialRewards="{ value }">
@@ -230,16 +232,16 @@ onMounted(async () => {
         <template #triggerTime="{ row, value }">
           <button
             class="trigger-button"
-            :class="{ 'bg-#e0f2ea': value, 'b- #9fc7b5': value, 'text-#176b48': value }"
+            :class="{ 'bg-orange-100': value, 'b-orange-300': value, 'text-orange-500': value }"
             @click="toggleTrigger(row.name)">
             {{ value ? '已触发' : '标记触发' }}
           </button>
           <i v-if="value" class="ml-2 icon icon-s i-lucide:copy cursor-pointer" @click="copyFate(row)"></i>
           <br />
-          <p v-if="value" class="if-center-center mt-1 bg-#e9f4ef px-2 py-3px rounded-lg text-3 fw-500 text-#6a7a8a">
+          <p v-if="value" class="if-center-center mt-1 bg-orange-100 px-2 rounded-lg text-3 fw-500 text-gray-500">
             <span>触发于 {{ value }}</span>
           </p>
-          <p v-else class="if-center-center text-3 mt-1 px-2 py-3px text-#6a7a8a">待触发</p>
+          <p v-else class="if-center-center text-3 mt-1 px-2 text-gray-500">待触发</p>
         </template>
       </stone-table>
     </div>

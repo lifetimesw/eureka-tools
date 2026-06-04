@@ -49,12 +49,12 @@ defineExpose({ resize })
             v-for="item in weatherList"
             :key="item.weather"
             v-title="item.name"
-            class="cursor-pointer icon icon-l"
+            class="cursor-pointer icon icon-m"
             :class="[`icon-eureka-${item.weather}`, { 'weather-active': weatherLock.includes(item.weather) }]"
             @click="handleLock(item.weather)"></i>
         </div>
         <span class="cursor-default font-400 ml-2 text-3">点击筛选</span>
-        <span v-show="weatherLockNames.length" class="cursor-default font-400 ml-2 text-3 text-orange-600">({{ weatherLockNames.join(', ') }})</span>
+        <span v-show="weatherLockNames.length" class="cursor-default font-400 ml-2 text-3 text-orange-500">({{ weatherLockNames.join(', ') }})</span>
       </div>
     </div>
     <div class="area-foreasts custom-scroll">
@@ -78,7 +78,7 @@ defineExpose({ resize })
         @contextmenu.prevent.stop="copyWeather(item, index)">
         <span class="foreast-lt-date">{{ item.localDateStr }}</span>
         <div class="foreast-weather">
-          <i class="icon" :class="`icon-eureka-${item.weather}`"></i>
+          <i class="icon mr-1" :class="`icon-eureka-${item.weather}`"></i>
           <span>{{ item.name }}</span>
         </div>
         <span class="foreast-lt-time">{{ item.localTimeStr }}</span>
@@ -101,7 +101,6 @@ defineExpose({ resize })
     height: auto;
     font-weight: bold;
     text-align: left;
-    // border-bottom: 1px solid rgb(226, 232, 240);
     .title {
       font-size: 1.25rem;
     }
@@ -121,32 +120,25 @@ defineExpose({ resize })
     .foreast-item {
       @include inline-flex(center, space-between, column);
       position: relative;
-      width: 7em;
-      height: 7em;
+      width: 6em;
+      height: 6em;
       margin: 0 0.2em;
-      padding: 0.5em 0;
+      padding-bottom: 0.5em;
       vertical-align: top;
       border: 1px solid #d8e0eb;
       border-radius: 0.5em;
       cursor: pointer;
       transition: margin 0.2s linear;
-      &.head {
-        width: 4em;
-      }
 
       .foreast-weather {
         @include flex();
         width: 100%;
-        .icon {
-          margin-right: 0.5em;
-        }
       }
       .foreast-lt-date {
         font-size: 0.75rem;
         color: #9aa9bf;
       }
       .foreast-lt-time {
-        font-size: 1.125rem;
         font-weight: 700;
       }
       .foreast-et {

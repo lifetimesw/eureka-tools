@@ -945,7 +945,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
     {
       name: '樵夫杰科的死亡对决',
       level: 47,
-      title: '樵夫杰科的死亡对决',
+      title: '',
       aliases: ['树人'],
       triggerCondition: { monster: '涌火树精', night: false, weather: null },
       description: '',
@@ -1133,8 +1133,8 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       specialRewards: [
         { name: '未鉴定的封印文理碎晶', icon: '020036' },
         { name: '丰水晶簇', icon: '020014' },
-        { name: '戈尔德马尔的角', icon: '022204' },
         { name: '九宫幻卡：矮儒', icon: '027663' },
+        { name: '戈尔德马尔的角', icon: '022204' },
       ],
     },
     {

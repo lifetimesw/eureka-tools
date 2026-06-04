@@ -23,7 +23,7 @@ $coldTableTextColor: #393d44;
   }
 
   &.cold {
-    font-size: 0.8em;
+    font-size: 0.875rem;
     .ytl-table {
       padding-bottom: 1px;
     }
@@ -40,7 +40,7 @@ $coldTableTextColor: #393d44;
         color: $coldTableTextColor;
         background-color: $coldTableThBg;
         line-height: 1.5;
-        padding: 0.5em;
+        padding: 0.25em 0.5em;
         border-right: 1px solid $coldTableBorderColor;
         border-bottom: 1px solid $coldTableBorderColor;
         &.tdCenter {
@@ -78,7 +78,7 @@ $coldTableTextColor: #393d44;
           line-height: 1.5;
           text-align: center;
           white-space: nowrap;
-          padding: 0.5em;
+          padding: 0.25em 0.5em;
           &.tdCenter {
             text-align: center;
           }

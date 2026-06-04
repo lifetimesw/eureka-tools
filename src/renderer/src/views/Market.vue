@@ -354,7 +354,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full of-hidden f-center-start">
+  <div class="w-full h-full of-hidden f-center-start text-[0.875rem]">
     <div class="h-full px-1em w-22em b-r-solid b-r-blueGray b-r-1">
       <div class="h-3em w-full gap-1 f-center-start">
         <input v-model="itemName" type="text" class="flex-1 normal-input" @keyup.enter="loadBlurItem" />

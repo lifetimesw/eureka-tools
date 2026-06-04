@@ -78,7 +78,7 @@ onMounted(() => {
           :key="index"
           v-title:bottom.interactive="getWeatherTitle(item, index)"
           class="cursor-pointer icon icon-l rounded-full"
-          :class="[`icon-eureka-${item.weather}`, index === 0 ? 'b-2 b-solid b-orange-600' : '']">
+          :class="[`icon-eureka-${item.weather}`, index === 0 ? 'b-2 b-solid b-orange-500' : '']">
         </i>
       </div>
     </div>
@@ -90,7 +90,7 @@ onMounted(() => {
           </span>
           <i
             class="icon rounded-full"
-            :class="[`icon-eureka-${column.key}`, currentWeather === column.key ? 'b-2 b-solid b-orange-600' : '']"
+            :class="[`icon-eureka-${column.key}`, currentWeather === column.key ? 'b-2 b-solid b-orange-500' : '']"
             v-title="column.title"
             v-else></i>
         </template>
@@ -99,21 +99,22 @@ onMounted(() => {
             {{ value }}
           </span>
           <i
-            class="icon"
-            :class="[row.weather.includes(column.key) ? `i-lucide:${row.timePeriod}` : '', { 'text-orange-600': currentWeather === column.key }]"
-            v-else></i>
+            class="icon icon-s"
+            :class="[row.weather.includes(column.key) ? `i-lucide:${row.timePeriod}` : '', { 'text-orange-500': currentWeather === column.key }]"
+            v-else>
+          </i>
         </template>
         <template #name="{ row, value }">
-          <i class="icon icon-l" :class="`icon-eureka-${row.type}`"></i>
+          <i class="icon icon-m" :class="`icon-eureka-${row.type}`"></i>
           <span>{{ value }}</span>
         </template>
         <template #element="{ value }">
           <div class="transfer" v-if="value.length === 2">
-            <i class="icon icon-xl" :class="`icon-element-${value[0]}`"></i>
+            <i class="icon icon-l" :class="`icon-element-${value[0]}`"></i>
             <i class="icon icon-s i-lucide:arrow-right"></i>
-            <i class="icon icon-xl" :class="`icon-element-${value[1]}`"></i>
+            <i class="icon icon-l" :class="`icon-element-${value[1]}`"></i>
           </div>
-          <i class="icon icon-xl" :class="`icon-element-${value[0]}`" v-else></i>
+          <i class="icon icon-l" :class="`icon-element-${value[0]}`" v-else></i>
         </template>
       </stone-table>
     </div>

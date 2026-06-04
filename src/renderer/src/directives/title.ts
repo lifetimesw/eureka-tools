@@ -270,7 +270,7 @@ function calculateAndShow(el: HTMLElement, tooltip: HTMLDivElement): void {
 
       // 水平方向
       if (placement === 'left') {
-        arrow.style.right = '-5px'
+        arrow.style.right = '-10px'
       } else {
         arrow.style.left = '-10px'
       }
