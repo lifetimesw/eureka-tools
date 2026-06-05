@@ -30,6 +30,18 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
+  mainWindow.on('close', () => {
+    if (mainWindow) {
+      const bounds = mainWindow.getBounds()
+      StoreHandler.setWindowConfig({
+        width: bounds.width,
+        height: bounds.height,
+        x: bounds.x,
+        y: bounds.y,
+        // isMaximized: win.isMaximized(),
+      })
+    }
+  })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
