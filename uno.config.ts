@@ -7,15 +7,16 @@ const iconsDir = './src/renderer/src/assets/svg/'
 export default defineConfig({
   safelist: [
     'i-svg:market',
+    'i-lucide:list-indent-increase',
+    'i-lucide:list-indent-decrease',
     'i-lucide:cloud',
+    'i-lucide:skull',
+    'i-lucide:square-star',
+    'i-lucide:clipboard-list',
     'i-lucide:sun-moon',
     'i-lucide:moon',
     'i-lucide:sun',
     'i-lucide:moon',
-    'i-lucide:skull',
-    'i-lucide:clipboard-list',
-    'i-lucide:list-indent-increase',
-    'i-lucide:list-indent-decrease',
     'i-lucide:badge-question-mark',
   ],
   presets: [

@@ -3,14 +3,21 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+interface NavItem {
+  name: string
+  title: string
+  icon: string
+}
+
 const route = useRoute()
 const router = useRouter()
 const isCollapsed = ref(true)
 
-const navList = [
+const navList: NavItem[] = [
   { name: 'EurekaWeather', title: '优雷卡天气', icon: 'cloud' },
   { name: 'EurekaFate', title: '优雷卡Fate', icon: 'clipboard-list' },
   { name: 'EurekaVariant', title: '优雷卡变异', icon: 'skull' },
+  { name: 'EurekaLogos', title: '优雷卡文理', icon: 'square-star' },
   { name: 'Market', title: '市场交易板', icon: 'market' },
   { name: 'About', title: '关于', icon: 'badge-question-mark' },
 ]
@@ -19,7 +26,7 @@ function toggleCollapse(): void {
   isCollapsed.value = !isCollapsed.value
 }
 
-function goTo(item: any): void {
+function goTo(item: NavItem): void {
   if (route.name !== item.name) {
     router.push({ name: item.name })
   }

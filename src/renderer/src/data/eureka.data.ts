@@ -1,4 +1,4 @@
-import type { EurekaAreaId, Fate, Variant, WeatherRate } from '@renderer/types/eureka.type'
+import type { EurekaAreaId, Fate, LogosCrystal, Variant, WeatherRate } from '@renderer/types/eureka.type'
 
 export const eurekaAreaNames: Record<EurekaAreaId, string> = {
   'area.EurekaAnemos': '常风之地',
@@ -1206,3 +1206,88 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
     },
   ],
 }
+
+export const eurekaLogosCrystal: LogosCrystal[] = [
+  {
+    name: '未鉴定的新锐文理碎晶',
+    icon: '020034',
+    logos: [
+      { name: '术士的记忆', icon: '027952' },
+      { name: '斗士的记忆', icon: '027952' },
+      { name: '重骑兵的记忆', icon: '027951' },
+      { name: '文理激怒', icon: '027951' },
+      { name: '文理治疗', icon: '027953' },
+      { name: '文理后跳', icon: '027954' },
+      { name: '文理麻痹', icon: '027955' },
+    ],
+  },
+  {
+    name: '未鉴定的熟练文理碎晶',
+    icon: '020035',
+    logos: [
+      { name: '文理康复', icon: '027953' },
+      { name: '文理复活', icon: '027953' },
+      { name: '文理虚枪', icon: '027954' },
+      { name: '文理镇定', icon: '027955' },
+      { name: '文理护盾', icon: '027956' },
+    ],
+  },
+  {
+    name: '未鉴定的攻势文理碎晶',
+    icon: '020036',
+    logos: [
+      { name: '武人的记忆', icon: '027952' },
+      { name: '文理浴血', icon: '027952' },
+    ],
+  },
+  {
+    name: '未鉴定的守势文理碎晶',
+    icon: '020036',
+    logos: [
+      { name: '守护者的记忆', icon: '027951' },
+      { name: '英杰的加护', icon: '027951' },
+    ],
+  },
+  {
+    name: '未鉴定的治愈文理碎晶',
+    icon: '020036',
+    logos: [
+      { name: '祭司的记忆', icon: '027953' },
+      { name: '文理救疗', icon: '027953' },
+    ],
+  },
+  {
+    name: '未鉴定的斥候文理碎晶',
+    icon: '020036',
+    logos: [
+      { name: '纹理飘羽步', icon: '027954' },
+      { name: '文理潜行', icon: '027954' },
+    ],
+  },
+  {
+    name: '未鉴定的妨碍文理碎晶',
+    icon: '020036',
+    logos: [
+      { name: '文理精神镖', icon: '027955' },
+      { name: '文理驱魔', icon: '027955' },
+    ],
+  },
+  {
+    name: '未鉴定的支援文理碎晶',
+    icon: '020036',
+    logos: [
+      { name: '文理魔盾', icon: '027956' },
+      { name: '文理石肤', icon: '027956' },
+    ],
+  },
+  {
+    name: '未鉴定的封印文理碎晶',
+    icon: '020036',
+    logos: [
+      { name: '盗贼的记忆', icon: '027954' },
+      { name: '文理魔法爆发', icon: '027952' },
+      { name: '文理双刃剑', icon: '027952' },
+      { name: '文理锐眼追击', icon: '027952' },
+    ],
+  },
+]

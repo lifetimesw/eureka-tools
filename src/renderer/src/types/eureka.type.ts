@@ -49,11 +49,6 @@ export interface Fate {
   }[]
 }
 
-export interface FateHistoryItem {
-  fate: Fate
-  time: string
-}
-
 /* 预测天气 */
 export interface ForecastItem {
   time: string
@@ -91,4 +86,29 @@ export interface Variant {
   timePeriod: TimePeriod
   weather: Weather[]
   remark?: string
+}
+
+/* 文理碎晶 */
+export interface LogosCrystal {
+  name: string
+  icon: string
+  logos: {
+    name: string
+    icon: string
+  }[]
+}
+
+/* 文理 */
+export interface Logos {
+  order: number
+  icon: string
+  name: string
+  description: string
+  synthesisRecipes: string[][]
+  type: string
+  castTime: number
+  recastTime: number
+  range: number
+  radius: number
+  uses: number
 }

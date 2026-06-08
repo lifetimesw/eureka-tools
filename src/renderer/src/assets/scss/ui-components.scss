@@ -1,3 +1,5 @@
+@use './mixins.scss' as *;
+
 /* 消息 */
 .stone-message {
   position: absolute;
@@ -81,4 +83,40 @@
 .stone-message-fade-leave-to {
   opacity: 0;
   transform: translateY(-100%);
+}
+
+/* 类型切换 */
+.stone-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  .stone-type-item {
+    @include inline-flex();
+    height: 2em;
+    padding: 0 0.8em;
+    font-size: 0.875em;
+    font-weight: bold;
+    color: #3b60b4;
+    cursor: pointer;
+    background-color: #f6fafd;
+    border: 1px solid rgba(43, 101, 240, 0.5);
+    border-right: none;
+    transition: all 0.4s;
+
+    &:first-child {
+      border-radius: 0.4em 0 0 0.4em;
+    }
+
+    &:last-child {
+      border-right: 1px solid rgba(43, 101, 240, 0.5);
+      border-radius: 0 0.4em 0.4em 0;
+    }
+
+    &.active {
+      color: #fefefe;
+      background: linear-gradient(90deg, #5372e3, #8cacef);
+    }
+  }
 }

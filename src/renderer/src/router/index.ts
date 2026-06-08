@@ -21,6 +21,11 @@ const router = createRouter({
       component: () => import('@renderer/views/EurekaFate.vue'),
     },
     {
+      path: '/EurekaLogos',
+      name: 'EurekaLogos',
+      component: () => import('@renderer/views/EurekaLogos.vue'),
+    },
+    {
       path: '/Market',
       name: 'Market',
       component: () => import('@renderer/views/Market.vue'),
