@@ -99,7 +99,7 @@ onMounted(() => {
             {{ value }}
           </span>
           <i
-            class="icon icon-s"
+            class="icon icon-m"
             :class="[row.weather.includes(column.key) ? `i-lucide:${row.timePeriod}` : '', { 'text-orange-500': currentWeather === column.key }]"
             v-else>
           </i>
@@ -111,7 +111,7 @@ onMounted(() => {
         <template #element="{ value }">
           <div class="transfer" v-if="value.length === 2">
             <i class="icon icon-l" :class="`icon-element-${value[0]}`"></i>
-            <i class="icon icon-s i-lucide:arrow-right"></i>
+            <i class="icon icon-m i-lucide:arrow-right"></i>
             <i class="icon icon-l" :class="`icon-element-${value[1]}`"></i>
           </div>
           <i class="icon icon-l" :class="`icon-element-${value[0]}`" v-else></i>

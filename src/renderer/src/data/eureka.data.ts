@@ -1211,6 +1211,14 @@ export const eurekaLogosCrystal: LogosCrystal[] = [
   {
     name: '未鉴定的新锐文理碎晶',
     icon: '020034',
+    sources: [
+      { name: '台风元精', icons: ['060653'], levels: [35, 40, 42, 45, 48, 49] },
+      { name: '余烬元精', icons: ['060651'], levels: [38, 39, 53] },
+      { name: '雪暴元精', icons: ['060652'], levels: [47, 50] },
+      { name: '雷暴元精', icons: ['060655'], levels: [36, 37, 51, 65] },
+      { name: '融雪元精', icons: ['060656'], levels: [65] },
+      { name: '火岛幸福兔(铜)', icons: ['060958'], levels: [] },
+    ],
     logos: [
       { name: '术士的记忆', icon: '027952' },
       { name: '斗士的记忆', icon: '027952' },
@@ -1220,10 +1228,18 @@ export const eurekaLogosCrystal: LogosCrystal[] = [
       { name: '文理后跳', icon: '027954' },
       { name: '文理麻痹', icon: '027955' },
     ],
+    description: '怪物等级 ≥ 玩家等级',
   },
   {
     name: '未鉴定的熟练文理碎晶',
     icon: '020035',
+    sources: [
+      { name: '雷暴元精', icons: ['060655'], levels: [41] },
+      { name: '雪暴元精', icons: ['060652'], levels: [65] },
+      { name: '死亡元精', icons: ['060651'], levels: [65] },
+      { name: '火岛幸福兔(铜)', icons: ['060958'], levels: [] },
+      { name: '火岛触发怪(概率)', icons: ['060502'], levels: [] },
+    ],
     logos: [
       { name: '文理康复', icon: '027953' },
       { name: '文理复活', icon: '027953' },
@@ -1231,63 +1247,106 @@ export const eurekaLogosCrystal: LogosCrystal[] = [
       { name: '文理镇定', icon: '027955' },
       { name: '文理护盾', icon: '027956' },
     ],
+    description: '怪物等级 ≥ 玩家等级',
   },
   {
     name: '未鉴定的攻势文理碎晶',
     icon: '020036',
+    sources: [
+      { name: '雪暴元精', icons: ['215884', '060652'], levels: [64] },
+      { name: '火岛幸福兔(金)', icons: ['060958'], levels: [] },
+      { name: '水岛幸福兔(金)', icons: ['060958'], levels: [] },
+      { name: '水岛怪物(概率)', icons: ['215884'], levels: [] },
+    ],
     logos: [
       { name: '武人的记忆', icon: '027952' },
       { name: '文理浴血', icon: '027952' },
     ],
+    description: '怪物等级 ≥ 玩家等级；\n雪暴元精为概率掉落，\n仅30连锁必定掉落20个',
   },
   {
     name: '未鉴定的守势文理碎晶',
     icon: '020036',
+    sources: [
+      { name: '火岛幸福兔(金)', icons: ['060958'], levels: [] },
+      { name: '水岛幸福兔(铜)', icons: ['060958'], levels: [] },
+    ],
     logos: [
       { name: '守护者的记忆', icon: '027951' },
       { name: '英杰的加护', icon: '027951' },
     ],
+    description: '',
   },
   {
     name: '未鉴定的治愈文理碎晶',
     icon: '020036',
+    sources: [
+      { name: '火岛幸福兔(银)', icons: ['060958'], levels: [] },
+      { name: '水岛幸福兔(铜)', icons: ['060958'], levels: [] },
+    ],
     logos: [
       { name: '祭司的记忆', icon: '027953' },
       { name: '文理救疗', icon: '027953' },
     ],
+    description: '',
   },
   {
     name: '未鉴定的斥候文理碎晶',
     icon: '020036',
+    sources: [
+      { name: '发生变异的爆炎上锁宝箱', icons: ['026531'], levels: [] },
+      { name: '发生变异的浸水上锁宝箱', icons: ['026531'], levels: [] },
+    ],
     logos: [
       { name: '纹理飘羽步', icon: '027954' },
       { name: '文理潜行', icon: '027954' },
     ],
+    description: '',
   },
   {
     name: '未鉴定的妨碍文理碎晶',
     icon: '020036',
+    sources: [
+      { name: '雪暴元精', icons: ['215884', '060652'], levels: [52] },
+      { name: '雷暴元精', icons: ['215884','060655'], levels: [54] },
+      { name: '台风元精', icons: ['215884','060653'], levels: [55] },
+      { name: '水岛幸福兔(铜、银)', icons: ['060958'], levels: [] },
+    ],
     logos: [
       { name: '文理精神镖', icon: '027955' },
       { name: '文理驱魔', icon: '027955' },
     ],
+    description: '怪物等级 ≥ 玩家等级',
   },
   {
     name: '未鉴定的支援文理碎晶',
     icon: '020036',
+    sources: [
+      { name: '余烬元精', icons: ['215884', '060651'], levels: [43, 44] },
+      { name: '雷暴元精', icons: ['215884','060655'], levels: [46] },
+      { name: '火岛幸福兔(银)', icons: ['060958'], levels: [] },
+      { name: '水岛幸福兔(银)', icons: ['060958'], levels: [] },
+      { name: '火岛怪物(概率)', icons: ['215884'], levels: [] },
+    ],
     logos: [
       { name: '文理魔盾', icon: '027956' },
       { name: '文理石肤', icon: '027956' },
     ],
+    description: '怪物等级 ≥ 玩家等级',
   },
   {
     name: '未鉴定的封印文理碎晶',
     icon: '020036',
+    sources: [
+      { name: '水岛触发怪(概率)', icons: ['060502'], levels: [] },
+      { name: '巴尔德西昂兵武塔', icons: ['061833'], levels: [] },
+    ],
     logos: [
       { name: '盗贼的记忆', icon: '027954' },
       { name: '文理魔法爆发', icon: '027952' },
       { name: '文理双刃剑', icon: '027952' },
       { name: '文理锐眼追击', icon: '027952' },
     ],
+    description: '触发怪等级 ≥ 玩家等级；\n触发怪等级越高掉落概率越大；\n连锁数量越高掉落概率越大',
   },
 ]

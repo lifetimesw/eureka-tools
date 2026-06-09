@@ -149,17 +149,17 @@ onUnmounted(() => {
       </div>
       <div class="min-w-300px f-center-end">
         <button class="win-min" @click="winPin()">
-          <i class="icon-s i-lucide:pin" :class="{ 'text-blue': isOnTop }"></i>
+          <i class="icon-m i-lucide:pin" :class="{ 'text-blue': isOnTop }"></i>
         </button>
         <button class="win-min" @click="minimize()">
-          <i class="icon-s i-lucide:minus"></i>
+          <i class="icon-m i-lucide:minus"></i>
         </button>
         <button class="win-max" @click="miximize()">
           <i v-if="isMaximized" class="icon-m i-lucide:minimize"></i>
-          <i v-else class="icon-s i-lucide:maximize"></i>
+          <i v-else class="icon-m i-lucide:maximize"></i>
         </button>
         <button class="win-close" @click="close">
-          <i class="icon-s i-lucide:x"></i>
+          <i class="icon-m i-lucide:x"></i>
         </button>
       </div>
     </div>

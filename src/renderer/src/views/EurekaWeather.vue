@@ -20,7 +20,7 @@ const clockStore = useClockStore()
 function setDefaultTimeRange(): void {
   const baseCock = clockStore.eorzeaClock.getWeatherBaseClock()
   startClock.value = baseCock.addHours(-6 * 8)
-  endClock.value = baseCock.addHours(7 * 8)
+  endClock.value = baseCock.addHours(10 * 8)
 }
 function updateTimeRange(): void {
   const hasStart = !!startTime.value
@@ -28,8 +28,8 @@ function updateTimeRange(): void {
 
   if (!hasStart && !hasEnd) {
     const baseCock = clockStore.eorzeaClock.getWeatherBaseClock()
-    startClock.value = baseCock.addHours(-5 * 8)
-    endClock.value = baseCock.addHours(6 * 8)
+    startClock.value = baseCock.addHours(-6 * 8)
+    endClock.value = baseCock.addHours(10 * 8)
     return
   }
 

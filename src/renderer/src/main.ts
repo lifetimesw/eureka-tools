@@ -8,7 +8,7 @@ import store from '@renderer/stores'
 import App from './App.vue'
 
 import 'virtual:uno.css'
-import '@renderer/assets/scss/index.scss'
+import '@renderer/assets/styles/index.scss'
 // If you want use Node.js, the`nodeIntegration` needs to be enabled in the Main process.
 // import './demos/node'
 

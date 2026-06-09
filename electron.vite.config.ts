@@ -37,8 +37,8 @@ export default defineConfig({
       preprocessorOptions: {
         scss: {
           additionalData: `
-            @use '@renderer/assets/scss/mixins' as *;
-            @use '@renderer/assets/scss/variables' as *;
+            @use '@renderer/assets/styles/mixins' as *;
+            @use '@renderer/assets/styles/variables' as *;
           `,
         },
       },

@@ -457,14 +457,14 @@ onMounted(() => {
               <img class="mr-1 icon" :src="item.icon" />
               <span>{{ item.name }}</span>
             </div>
-            <i class="cursor-pointer ml-auto icon-s i-lucide:pin hover:i-lucide:pin-off" @click="handlePinOff(item)"></i>
+            <i class="cursor-pointer ml-auto icon-m i-lucide:pin hover:i-lucide:pin-off" @click="handlePinOff(item)"></i>
           </div>
           <div class="h-2em w-full group f-center-start" v-for="item in historyItems" :key="item.id">
             <div class="cursor-pointer f-center hover:text-blue" :class="{ active: item.id === itemInfo.id }" @click="loadItemInfo(item)">
               <img class="mr-1 icon" :src="item.icon" />
               <span>{{ item.name }}</span>
             </div>
-            <i class="cursor-pointer ml-auto icon-s i-lucide:pin hidden group-hover:inline-block" @click="handlePin(item)"></i>
+            <i class="cursor-pointer ml-auto icon-m i-lucide:pin hidden group-hover:inline-block" @click="handlePin(item)"></i>
           </div>
         </div>
       </div>

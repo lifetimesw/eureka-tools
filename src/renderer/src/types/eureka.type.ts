@@ -92,10 +92,16 @@ export interface Variant {
 export interface LogosCrystal {
   name: string
   icon: string
+  sources: {
+    name: string
+    icons: string[]
+    levels: number[]
+  }[]
   logos: {
     name: string
     icon: string
   }[]
+  description: string
 }
 
 /* 文理 */

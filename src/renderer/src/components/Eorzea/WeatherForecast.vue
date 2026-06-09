@@ -43,7 +43,7 @@ defineExpose({ resize })
     <div class="area-header">
       <div class="f-center-start">
         <span class="text-5">{{ areaName }}</span>
-        <i class="cursor-pointer ml-2 icon-s i-lucide:copy" @click="copyForeastWeather"></i>
+        <i class="cursor-pointer ml-2 icon-m i-lucide:copy" @click="copyForeastWeather"></i>
         <div class="ml-4em gap-2 if-start-start">
           <i
             v-for="item in weatherList"
