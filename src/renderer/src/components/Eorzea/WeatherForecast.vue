@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { useWeatherForecast, WeatherForecastProps, FORECAST_STATUS } from '@renderer/hooks/Eorzea/useWeatherForecast'
+import { useWeatherForecast, WeatherForecastProps, FORECAST_STATUS } from '@renderer/hooks/useWeatherForecast'
 import { WeatherRate } from '@renderer/types/eureka.type'
 
 import { EorzeaClock } from '@renderer/utils/clock.util'
 import { Eureka } from '@renderer/utils/eureka.util'
-import { computed } from 'vue'
 
 const props = withDefaults(defineProps<WeatherForecastProps>(), {
   areaId: 'area.EurekaAnemos',

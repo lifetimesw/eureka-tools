@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useClockStore } from '@renderer/stores'
 import { IPC_CHANNELS } from '@shared/channels'
 

@@ -24,6 +24,7 @@ export default defineConfig(
   {
     files: ['**/*.{ts,mts,tsx,vue}'],
     rules: {
+      'no-undef': 'off',
       'vue/require-default-prop': 'off',
       'vue/multi-word-component-names': 'off',
       'vue/block-lang': [

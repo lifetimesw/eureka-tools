@@ -1,5 +1,5 @@
-import { Ref, shallowRef } from 'vue'
 import { EorzeaClock } from '@renderer/utils/clock.util'
+import type { Ref } from 'vue'
 
 interface UseEorzeaClockReturn {
   eorzeaClock: Ref<EorzeaClock>

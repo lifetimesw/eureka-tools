@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { DataCenter, World } from '@renderer/types/market.type'
-import { computed, onMounted, reactive, ref, shallowRef, toRaw, watch } from 'vue'
 import constants from '@renderer/api/constants'
 import { axiosRequest } from '@renderer/api/request'
 import { StoneMessage } from '@renderer/components/base/message'
@@ -15,6 +14,7 @@ import {
   updateServerData,
 } from '@renderer/utils/market.util'
 import { IpcResponse } from '@shared/response'
+import { getIcon } from '@renderer/api/request'
 
 interface Item {
   id?: number
@@ -101,27 +101,6 @@ const historyItems = reactive<Item[]>([])
 const pinItems = reactive<Item[]>([])
 const priceResult = shallowRef<PriceResult | null>(null)
 
-function getBuyTime(timestamp: number): string {
-  const now = new Date()
-  const target = new Date(timestamp)
-  const diffMs = now.getTime() - target.getTime()
-  const diffHours = diffMs / 3600000
-  if (diffHours < 24) {
-    if (diffMs < 60000) return '刚刚'
-    if (diffMs < 3600000) {
-      const minutes = Math.floor(diffMs / 60000)
-      return `${minutes}分钟前`
-    }
-    const hours = Math.floor(diffHours)
-    return `${hours}小时前`
-  }
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const startOfTargetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate())
-  const diffDays = Math.floor((startOfToday.getTime() - startOfTargetDay.getTime()) / 86400000)
-  if (diffDays === 1) return '昨天'
-  return `${diffDays}天前`
-}
-
 /* 读取缓存 */
 async function loadMarketableList(): Promise<void> {
   try {
@@ -198,7 +177,7 @@ const tableData = computed(() => {
           quantity: item.quantity,
           total: item.total.toLocaleString(),
           buyerName: item.buyerName,
-          buyTime: getBuyTime(item.timestamp * 1000),
+          buyTime: dayjs(item.timestamp * 1000).fromNow(),
         }
       })
     }
@@ -302,13 +281,6 @@ function handleDataCenterChange(): void {
 
 /* 获取物品信息和价格 */
 const priceRequestKey = ref('')
-function getIconById(id: number): string {
-  // const path = item.fields.Icon.path.match(/ui\/icon\/(.*?)\.tex$/)
-  // icon: path && path[1] ? `https://xivapi.com/i/${path[1]}.png` : null,
-  const iconname = id.toString().padStart(6, '0')
-  const iconParent = `${iconname.slice(0, 3)}000`
-  return `https://xivapi.com/i/${iconParent}/${iconname}.png`
-}
 function loadPriceInfo(): void {
   if (priceRequestKey.value) {
     axiosRequest.cancel(priceRequestKey.value)
@@ -364,7 +336,7 @@ function loadBlurItem(): void {
             id: item.row_id,
             name: item.fields.Name,
             enName: item.fields[enNameKey],
-            icon: getIconById(item.fields.Icon.id),
+            icon: getIcon(item.fields.Icon.id),
             score: item.score,
             sheet: item.sheet,
           }

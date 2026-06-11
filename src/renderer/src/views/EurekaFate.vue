@@ -2,10 +2,10 @@
 import type { EurekaAreaId, Fate, ForecastItem } from '@renderer/types/eureka.type'
 import { IpcResponse } from '@shared/response'
 import StoneMessage from '@renderer/components/base/message'
-import { computed, onMounted, reactive, ref, toRaw, watch } from 'vue'
 import { eurekaAreaFates } from '@renderer/data/eureka.data'
 import { EorzeaWeather } from '@renderer/utils/weather.util'
 import { useClockStore } from '@renderer/stores'
+import { getIcon } from '@renderer/api/request'
 
 const clockStore = useClockStore()
 
@@ -101,12 +101,6 @@ function copyFate(rowData: Fate): void {
   })
 }
 
-function getIcon(iconId: string): string {
-  if (!iconId) return ''
-  const iconname = iconId.padStart(6, '0')
-  const iconParent = `${iconname.slice(0, 3)}000`
-  return `https://xivapi.com/i/${iconParent}/${iconname}.png`
-}
 function toggleTrigger(name: string): void {
   const areaTrigger = triggerMap[areaId.value]
   if (areaTrigger[name]) {

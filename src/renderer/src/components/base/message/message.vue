@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
-
 interface Props {
   duration?: number
   content?: string | object

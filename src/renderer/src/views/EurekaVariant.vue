@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { EurekaAreaId, ForecastItem } from '@renderer/types/eureka.type'
-import { computed, onMounted, ref, watch } from 'vue'
 import { eurekaAreaVariants, eurekaAreaWeatherRates } from '@renderer/data/eureka.data'
 import { EorzeaWeather } from '@renderer/utils/weather.util'
 import { useClockStore } from '@renderer/stores'

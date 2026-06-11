@@ -5,6 +5,7 @@ import UnoCSS from 'unocss/vite'
 import { presetIcons, presetAttributify } from 'unocss'
 import autoprefixer from 'autoprefixer'
 import cssnano from 'cssnano'
+import AutoImport from 'unplugin-auto-import/vite'
 
 export default defineConfig({
   main: {
@@ -56,6 +57,22 @@ export default defineConfig({
         presets: [presetAttributify(), presetIcons({ scale: 1.2, warn: true })],
       }),
       vue(),
+      AutoImport({
+        vueTemplate: true,
+        imports: [
+          'vue',
+          'vue-router',
+          'pinia',
+          {
+            vue: ['render', 'createVNode', 'isVNode'],
+          },
+          {
+            dayjs: [['default', 'dayjs']],
+          },
+        ],
+        dts: 'src/types/auto-imports.d.ts',
+        defaultExportByFilename: false,
+      }),
     ],
   },
 })

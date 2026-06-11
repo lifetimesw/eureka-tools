@@ -1,6 +1,6 @@
 import { MessageOptions, MessageType, MessageInstance, MessageFn } from '@renderer/types/message.type'
 import MessageComponent from './message.vue'
-import { createVNode, render, nextTick, isVNode, VNode } from 'vue'
+import type { VNode } from 'vue'
 
 const MESSAGE_GAP = 10
 const DEFAULT_OFFSET = 40

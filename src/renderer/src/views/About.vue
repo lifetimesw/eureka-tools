@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
 const techStack = ['XIVAPI', 'Garland Tools', 'Universalis', 'Classjob-Icons', 'Electron-Vite 5', 'Vue 3.5', 'Unocss']
 const version = ref('')
 const appName = ref('')

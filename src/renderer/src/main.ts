@@ -1,11 +1,15 @@
-import type { Component } from 'vue'
-import { createApp } from 'vue'
 import Table from '@renderer/components/base/table.vue'
 import Type from '@renderer/components/base/type.vue'
 import directives from '@renderer/directives'
 import router from '@renderer/router'
 import store from '@renderer/stores'
 import App from './App.vue'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/zh-cn'
+
+dayjs.extend(relativeTime)
+dayjs.locale('zh-cn')
 
 import 'virtual:uno.css'
 import '@renderer/assets/styles/index.scss'

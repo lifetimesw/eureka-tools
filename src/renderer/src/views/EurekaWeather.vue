@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EurekaAreaId } from '@renderer/types/eureka.type'
-import { onUnmounted, reactive, ref, shallowRef, watch, type ComponentPublicInstance } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
 import WeatherForecast from '@renderer/components/Eorzea/WeatherForecast.vue'
 import { useClockStore } from '@renderer/stores'
 import { EorzeaClock } from '@renderer/utils/clock.util'

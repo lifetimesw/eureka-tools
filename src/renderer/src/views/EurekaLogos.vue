@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { eurekaLogosCrystal } from '@renderer/data/eureka.data'
-import { reactive, ref } from 'vue'
+import { getIcon } from '@renderer/api/request'
 
 const logosType = ref(1)
 const logosTypeList = [
@@ -19,13 +19,6 @@ const tableData = reactive({
   columns: crystalColumns,
   dataArr: eurekaLogosCrystal,
 })
-
-function getIcon(iconId: string): string {
-  if (!iconId) return ''
-  const iconname = iconId.padStart(6, '0')
-  const iconParent = `${iconname.slice(0, 3)}000`
-  return `https://xivapi.com/i/${iconParent}/${iconname}.png`
-}
 </script>
 
 <template>

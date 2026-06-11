@@ -1,6 +1,5 @@
 <script lang="ts" setup generic="TRow extends object, const TCol extends readonly {key:string}[]">
 import type { ColumnRow, Slots, TableProps } from '@renderer/hooks/useTable'
-import { nextTick, ref, watch } from 'vue'
 import { useTable } from '@renderer/hooks/useTable'
 import RenderTd from './renderTd.vue'
 

@@ -1,6 +1,5 @@
 import { EorzeaClock } from '@renderer/utils/clock.util'
 import { defineStore } from 'pinia'
-import { computed, shallowRef } from 'vue'
 
 export const useClockStore = defineStore('clock', () => {
   const eorzeaClock = shallowRef<EorzeaClock>(new EorzeaClock())

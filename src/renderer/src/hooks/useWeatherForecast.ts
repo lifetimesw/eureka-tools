@@ -1,6 +1,6 @@
 import type { EurekaAreaId, ForecastItem, ForecastResult, Weather } from '@renderer/types/eureka.type'
 import { EorzeaClock } from '@renderer/utils/clock.util'
-import { nextTick, onMounted, Ref, ComputedRef, ShallowReactive, computed, ref, watch, shallowReactive, Reactive, reactive } from 'vue'
+import type { Ref, ComputedRef, ShallowReactive, Reactive } from 'vue'
 import { Eureka } from '@renderer/utils/eureka.util'
 import { EorzeaWeather } from '@renderer/utils/weather.util'
 import { useClockStore } from '@renderer/stores'

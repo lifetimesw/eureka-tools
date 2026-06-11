@@ -1,5 +1,6 @@
 import { useRequestStore } from '@renderer/stores'
 import { CustomRequestConfig, HttpResponse } from '@shared/httpRequest'
+import constants from './constants'
 
 async function axiosRequest<T = unknown>(config: CustomRequestConfig): Promise<T> {
   const requestStore = useRequestStore()
@@ -28,6 +29,13 @@ axiosRequest.cancel = (requestKey: string): void => {
 }
 axiosRequest.clear = (): void => {
   window.api.http.clear()
+}
+
+export function getIcon(iconId: string | number): string {
+  if (!iconId) return ''
+  const iconname = String(iconId).padStart(6, '0')
+  const iconParent = `${iconname.slice(0, 3)}000`
+  return `${constants.url.xivapi}/i/${iconParent}/${iconname}.png`
 }
 
 export { axiosRequest }
