@@ -67,13 +67,7 @@ export interface ForecastResult {
   areaName: string
   currentTime: string
   forecasts: ForecastItem[]
-  timeRange: {
-    start: string
-    end: string
-    // totalHours: number
-    // hoursBefore: number
-    // hoursAfter: number
-  }
+  timeRange: { start: string; end: string }
   generatedAt: Date
 }
 
@@ -92,15 +86,8 @@ export interface Variant {
 export interface LogosCrystal {
   name: string
   icon: string
-  sources: {
-    name: string
-    icons: string[]
-    levels: number[]
-  }[]
-  logos: {
-    name: string
-    icon: string
-  }[]
+  sources: { name: string; icons: string[]; levels: number[] }[]
+  logos: { name: string; icon: string }[]
   description: string
 }
 
@@ -109,12 +96,13 @@ export interface Logos {
   order: number
   icon: string
   name: string
-  description: string
-  synthesisRecipes: string[][]
   type: string
   castTime: number
   recastTime: number
   range: number
   radius: number
   uses: number
+  jobs: { name: string; icon: string }[]
+  synthesisRecipes: { name: string; icon: string }[][]
+  description: string[]
 }
