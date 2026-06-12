@@ -2,7 +2,7 @@
 import { eurekaLogosCrystal, eurekaLogos } from '@renderer/data/eureka.data'
 import { getIcon } from '@renderer/api/request'
 
-const logosType = ref(2)
+const logosType = ref(1)
 const logosTypeList = [
   { type: 1, name: '碎晶' },
   { type: 2, name: '文理' },
@@ -23,17 +23,44 @@ const logosColumns = [
   { key: 'description', title: '说明' },
 ]
 
+const filterText = ref('')
+
 const tableData = computed(() => {
+  const fContent = filterText.value.trim()
+  if (logosType.value === 1) {
+    if (fContent) {
+      return {
+        columns: crystalColumns,
+        dataArr: eurekaLogosCrystal.filter((item) => item.name.includes(fContent) || item.logos.find((x) => x.name.includes(fContent))),
+      }
+    }
+    return {
+      columns: crystalColumns,
+      dataArr: eurekaLogosCrystal,
+    }
+  }
+  if (fContent) {
+    return {
+      columns: logosColumns,
+      dataArr: eurekaLogos.filter(
+        (item) => item.name.includes(fContent) || item.synthesisRecipes.find((x) => x.find((s) => s.name.includes(fContent)))
+      ),
+    }
+  }
   return {
-    columns: logosType.value === 1 ? crystalColumns : logosColumns,
-    dataArr: logosType.value === 1 ? eurekaLogosCrystal : eurekaLogos,
+    columns: logosColumns,
+    dataArr: eurekaLogos,
   }
 })
+function handleFilter(event: KeyboardEvent): void {
+  filterText.value = (event.target as HTMLInputElement).value
+}
 </script>
 
 <template>
   <div class="w-full h-full px-1em pb-1em">
     <div class="w-full h-3em f-center-center gap-2">
+      <input type="text" class="normal-input" placeholder="检索碎晶/文理 ⮠" @keyup.enter="handleFilter" />
       <stone-type v-model="logosType" :list="logosTypeList"></stone-type>
     </div>
     <div class="w-full h-[calc(100%-3em)]">
