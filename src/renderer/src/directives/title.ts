@@ -10,6 +10,7 @@ declare global {
     _hasTitleDirective?: boolean
     _hideTimeout?: number
     _interactive?: boolean
+    _template?: boolean
   }
 }
 type Placement = 'top' | 'bottom' | 'left' | 'right'
@@ -23,6 +24,7 @@ export const vTitle: Directive = {
     el._titleValue = binding.value
     el._hasTitleDirective = true
     el._interactive = binding.modifiers.interactive || false
+    el._template = binding.modifiers.template || false
     bindEvents(el)
   },
   updated(el: HTMLElement, binding: DirectiveBinding) {
@@ -75,10 +77,18 @@ function bindEvents(el: HTMLElement): void {
     const arrow = document.createElement('div')
     arrow.className = 'stone-title-tooltip-arrow'
     tooltip.appendChild(arrow)
-    const content = document.createElement('span')
-    content.textContent = value
-    content.style.whiteSpace = 'pre-line'
-    tooltip.appendChild(content)
+    if (el._template) {
+      const content = document.createElement('div')
+      content.className = 'stone-title-tooltip-template'
+      content.innerHTML = value
+      tooltip.appendChild(content)
+    } else {
+      const content = document.createElement('div')
+      content.className = 'stone-title-tooltip-text'
+      content.textContent = value
+      content.style.whiteSpace = 'pre-line'
+      tooltip.appendChild(content)
+    }
 
     tooltip.style.opacity = '0'
     tooltip.style.visibility = 'hidden'

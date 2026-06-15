@@ -67,7 +67,10 @@ export default defineConfig({
             vue: ['render', 'createVNode', 'isVNode'],
           },
           {
-            dayjs: [['default', 'dayjs']],
+            dayjs: [
+              ['default', 'dayjs'],
+              ['*', '_dayjs'],
+            ],
           },
         ],
         dts: 'src/types/auto-imports.d.ts',

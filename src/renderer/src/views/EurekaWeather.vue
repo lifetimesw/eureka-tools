@@ -104,9 +104,9 @@ onUnmounted(() => {
   <div class="h-full w-full">
     <div class="h-[2.5em] w-full f-center-center">
       <span>开始：</span>
-      <input v-model="startTime" class="mr-1em normal-input-date" type="datetime-local" />
+      <stone-time type="minute" v-model="startTime" class="mr-1em" />
       <span>结束：</span>
-      <input v-model="endTime" class="mr-1em normal-input-date" type="datetime-local" />
+      <stone-time type="minute" v-model="endTime" class="mr-1em" />
       <button class="normal-button" @click="resetTime">回到当前</button>
       <i v-title="'右键点击可复制天气'" class="ml-1em icon-l i-lucide:circle-question-mark"></i>
     </div>

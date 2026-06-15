@@ -26,75 +26,77 @@ $coldTableTextColor: #393d44;
     font-size: 0.875rem;
     .ytl-table {
       padding-bottom: 1px;
-    }
-    thead {
-      tr:first-child {
-        th {
-          border-top: 1px solid $coldTableBorderColor;
-        }
-      }
-      th {
-        white-space: nowrap;
-        font-weight: bold;
-        cursor: pointer;
-        color: $coldTableTextColor;
-        background-color: $coldTableThBg;
-        line-height: 1.5;
-        padding: 0.25em 0.5em;
-        border-right: 1px solid $coldTableBorderColor;
-        border-bottom: 1px solid $coldTableBorderColor;
-        &.tdCenter {
-          text-align: center;
-        }
-        &.tdLeft {
-          text-align: left;
-          text-indent: 1em;
-        }
-        &.th-1 {
-          border-left: 1px solid $coldTableBorderColor;
-        }
-      }
-    }
-    tbody {
-      tr {
-        &:nth-child(odd) {
-          td {
-            background: $coldTableTrOddBg;
+      > table {
+        > thead {
+          > tr:first-child {
+            > th {
+              border-top: 1px solid $coldTableBorderColor;
+            }
           }
-        }
-        &:nth-child(even) {
-          td {
-            background: $coldTableTrEvenBg;
-          }
-        }
-        &:last-child {
-          td {
+          > tr th {
+            white-space: nowrap;
+            font-weight: bold;
+            cursor: pointer;
+            color: $coldTableTextColor;
+            background-color: $coldTableThBg;
+            line-height: 1.5;
+            padding: 0.25em 0.5em;
+            border-right: 1px solid $coldTableBorderColor;
             border-bottom: 1px solid $coldTableBorderColor;
+            &.tdCenter {
+              text-align: center;
+            }
+            &.tdLeft {
+              text-align: left;
+              text-indent: 1em;
+            }
+            &.th-1 {
+              border-left: 1px solid $coldTableBorderColor;
+            }
           }
         }
-        td {
-          border-right: 1px solid $coldTableBorderColor;
-          color: $coldTableTextColor;
-          line-height: 1.5;
-          text-align: center;
-          white-space: nowrap;
-          padding: 0.25em 0.5em;
-          &.tdCenter {
-            text-align: center;
-          }
-          &.tdLeft {
-            text-align: left;
-            text-indent: 1em;
-          }
+        > tbody {
+          > tr {
+            &:nth-child(odd) {
+              > td {
+                background: $coldTableTrOddBg;
+              }
+            }
+            &:nth-child(even) {
+              > td {
+                background: $coldTableTrEvenBg;
+              }
+            }
+            &:last-child {
+              > td {
+                border-bottom: 1px solid $coldTableBorderColor;
+              }
+            }
+            > td {
+              border-right: 1px solid $coldTableBorderColor;
+              color: $coldTableTextColor;
+              line-height: 1.5;
+              text-align: center;
+              white-space: nowrap;
+              padding: 0.25em 0.5em;
+              &.tdCenter {
+                text-align: center;
+              }
+              &.tdLeft {
+                text-align: left;
+                text-indent: 1em;
+              }
 
-          &.td-1,
-          &:first-child {
-            border-left: 1px solid $coldTableBorderColor;
-          }
-          .normalButton {
-            margin-left: 0.5em;
-            &:first-child {
-              margin-left: 0;
+              &.td-1,
+              &:first-child {
+                border-left: 1px solid $coldTableBorderColor;
+              }
+              .normalButton {
+                margin-left: 0.5em;
+                &:first-child {
+                  margin-left: 0;
+                }
+              }
             }
           }
         }

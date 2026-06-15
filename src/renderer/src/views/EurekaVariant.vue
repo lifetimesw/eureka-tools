@@ -105,7 +105,7 @@ onMounted(() => {
         </template>
         <template #name="{ row, value }">
           <i class="icon icon-m" :class="`icon-eureka-${row.type}`"></i>
-          <span>{{ value }}</span>
+          <span class="inline-block w-10em text-left">{{ value }}</span>
         </template>
         <template #element="{ value }">
           <div class="transfer" v-if="value.length === 2">

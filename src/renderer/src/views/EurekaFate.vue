@@ -26,7 +26,7 @@ const columns = [
   { key: 'triggerTime', title: '触发状态', class: 'w-14em' },
 ]
 
-const triggerMap = reactive<Record<EurekaAreaId, Record<number, string>>>({
+const triggerMap = reactive<Record<EurekaAreaId, Record<string, string>>>({
   'area.EurekaAnemos': {},
   'area.EurekaPagos': {},
   'area.EurekaHydatos': {},
@@ -93,7 +93,7 @@ function copyHistory(trigger: boolean): void {
 
 function copyFate(rowData: Fate): void {
   const timeAfter = (new Date().getTime() - new Date(rowData.triggerTime || '').getTime()) / 1000
-  const content = `【${rowData.name}】触发于${rowData.triggerTime}。已经过去${Math.floor(timeAfter / 60)}分${Math.floor(timeAfter % 60)}秒`
+  const content = `【${rowData.name}】触发于${dayjs(rowData.triggerTime).format('YYYY-MM-DD HH:mm')}，已经过去${Math.floor(timeAfter / 60)}分。`
   window.api.clipboard.writeText(content).then((result: IpcResponse) => {
     if (result.success) {
       StoneMessage.success(`${rowData.name} 触发记录复制成功`)
@@ -106,7 +106,7 @@ function toggleTrigger(name: string): void {
   if (areaTrigger[name]) {
     areaTrigger[name] = ''
   } else {
-    areaTrigger[name] = new Date().toLocaleString()
+    areaTrigger[name] = dayjs().format('YYYY-MM-DD HH:mm')
   }
 }
 function resetTrigger(): void {
@@ -232,9 +232,10 @@ onMounted(async () => {
           </button>
           <i v-if="value" class="ml-2 icon icon-s i-lucide:copy cursor-pointer" @click="copyFate(row)"></i>
           <br />
-          <p v-if="value" class="if-center-center mt-1 bg-orange-100 px-2 rounded-lg text-3 fw-500 text-gray-500">
-            <span>触发于 {{ value }}</span>
-          </p>
+          <div v-if="value" class="f-center-center mt-1 bg-orange-100 px-2 rounded-lg text-3 fw-500 text-gray-500">
+            <span>触发于 </span>
+            <stone-time type="minute" v-model="triggerMap[areaId][row.name]"></stone-time>
+          </div>
           <p v-else class="if-center-center text-3 mt-1 px-2 text-gray-500">待触发</p>
         </template>
       </stone-table>

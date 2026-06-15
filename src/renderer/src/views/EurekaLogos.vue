@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { eurekaLogosCrystal, eurekaLogos } from '@renderer/data/eureka.data'
 import { getIcon } from '@renderer/api/request'
+import { Logos } from '@renderer/types/eureka.type'
 
 const logosType = ref(2)
 const logosTypeList = [
   { type: 1, name: '碎晶' },
   { type: 2, name: '文理' },
+  { type: 3, name: '文理图鉴' },
 ]
 
 const crystalColumns = [
@@ -55,6 +57,101 @@ const tableData = computed(() => {
 function handleFilter(event: KeyboardEvent): void {
   filterText.value = (event.target as HTMLInputElement).value
 }
+
+function getInfoModel(rowData: Logos): string {
+  const { icon, name, type, castTime, recastTime, range, radius, uses, jobs, synthesisRecipes, description } = rowData
+  return `
+  <div class="logos-tooltip">
+      <div class="tooltip-header">
+        <div class="logos-header-left">
+          <img class="logos-icon" src="${getIcon(icon)}" />
+        </div>
+        <div class="logos-header-right">
+          <span class="title">${name}</span>
+          <div class="logos-type">
+            <span class="type">${type}</span>
+            <div class="logos-range">
+              <span>距离</span>
+              <span class="mr-2">${range}米</span>
+              <span>范围</span>
+              <span>${radius}米</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tooltip-use">
+        <div class="use-item">
+          <span class="title">咏唱时间</span>
+          <span>${castTime === 0 ? '即时' : `${castTime} 秒`}</span>
+        </div>
+        <div class="use-item">
+          <span class="title">复唱时间</span>
+          <span>${recastTime} 秒</span>
+        </div>
+        ${
+          uses > 0
+            ? `<div class="use-item">
+          <span class="title">次数</span>
+          <span>${uses}/${uses}</span>
+        </div>`
+            : ''
+        }
+      </div>
+      <div class="tooltip-main">
+        ${description
+          .map((item) => {
+            if (Array.isArray(item)) {
+              return `<p class="logos-desc">
+                 ${item
+                   .map((x, i) =>
+                     x.includes('：')
+                       ? `<span class="c-green-600 ${i > 0 ? 'ml-2' : 0}">${x.split('：')[0]}：</span>
+                      <span>${x.split('：')[1]}</span>`
+                       : `<span>${x}</span>`
+                   )
+                   .join('')}
+                </p>`
+            }
+            return `<p class="logos-desc">
+              <span>${item}</span>
+            </p>`
+          })
+          .join('')}
+        <div class="logos-jobs">
+          <span class="name">适应职业</span>
+          <div class="jobs-group">
+            ${jobs
+              .map(
+                (item) => `<div class="jobs-item">
+                <img class="icon icon-m" src="${getIcon(item.icon)}" />
+                <span>${item.name}</span>
+              </div>`
+              )
+              .join('')}
+          </div>
+        </div>
+        <div class="logos-recipes">
+          <span class="name">鉴定 | 合成</span>
+          <div class="recipes-group">
+            ${synthesisRecipes
+              .map(
+                (item) => `<div class="recipes-item">
+                ${item
+                  .map(
+                    (x, i) => `${i !== 0 ? `<span class="mx-1">+</span>` : ''}
+                    <img class="icon icon-m" src="${getIcon(x.icon)}" />
+                    <span>${x.name}</span>`
+                  )
+                  .join('')}
+              </div>`
+              )
+              .join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+}
 </script>
 
 <template>
@@ -89,8 +186,8 @@ function handleFilter(event: KeyboardEvent): void {
         </template>
       </stone-table>
       <stone-table v-else :table-data="tableData" class="cold" fix-head>
-        <template #icon="{ value }">
-          <img class="icon icon-xxl" :src="getIcon(value)" />
+        <template #icon="{ row, value }">
+          <img class="icon icon-xxl" :src="getIcon(value)" v-title:right.template="getInfoModel(row)" />
         </template>
         <template #synthesisRecipes="{ value }">
           <div v-for="(child, index) in value" :key="index" class="f-center">
