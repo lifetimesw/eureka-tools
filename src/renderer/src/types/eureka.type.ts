@@ -104,5 +104,5 @@ export interface Logos {
   uses: number
   jobs: { name: string; icon: string }[]
   synthesisRecipes: { name: string; icon: string }[][]
-  description: string[]
+  description: (string | string[])[]
 }

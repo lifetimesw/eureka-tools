@@ -2,7 +2,7 @@
 import { eurekaLogosCrystal, eurekaLogos } from '@renderer/data/eureka.data'
 import { getIcon } from '@renderer/api/request'
 
-const logosType = ref(1)
+const logosType = ref(2)
 const logosTypeList = [
   { type: 1, name: '碎晶' },
   { type: 2, name: '文理' },
@@ -19,7 +19,7 @@ const logosColumns = [
   { key: 'icon', title: '图标' },
   { key: 'name', title: '名称' },
   { key: 'synthesisRecipes', title: '鉴定 | 合成' },
-  { key: 'jobs', title: '职业' },
+  { key: 'jobs', title: '适应职业' },
   { key: 'description', title: '说明' },
 ]
 
@@ -64,7 +64,7 @@ function handleFilter(event: KeyboardEvent): void {
       <stone-type v-model="logosType" :list="logosTypeList"></stone-type>
     </div>
     <div class="w-full h-[calc(100%-3em)]">
-      <stone-table v-if="logosType === 1" :tableData="tableData" class="cold" fix-head>
+      <stone-table v-if="logosType === 1" :table-data="tableData" class="cold" fix-head>
         <template #name="{ row, value }">
           <p class="if-center">
             <img class="icon icon-m" :src="getIcon(row.icon)" />
@@ -88,13 +88,13 @@ function handleFilter(event: KeyboardEvent): void {
           <p class="ws-pre">{{ value }}</p>
         </template>
       </stone-table>
-      <stone-table v-else :tableData="tableData" class="cold" fix-head>
+      <stone-table v-else :table-data="tableData" class="cold" fix-head>
         <template #icon="{ value }">
           <img class="icon icon-xxl" :src="getIcon(value)" />
         </template>
         <template #synthesisRecipes="{ value }">
-          <div class="f-center" v-for="(child, index) in value" :key="index">
-            <i class="icon mr-1 i-lucide:circle-divide"></i>
+          <div v-for="(child, index) in value" :key="index" class="f-center">
+            <i class="icon icon-s mr-1 i-lucide:circle-divide"></i>
             <div v-for="(item, idx) in child" :key="item.icon" class="if-center lh-6">
               <span v-if="idx !== 0" class="mx-2">+</span>
               <img class="icon mr-1" :src="getIcon(item.icon)" />
@@ -110,14 +110,20 @@ function handleFilter(event: KeyboardEvent): void {
         </template>
         <template #description="{ value }">
           <template v-for="(item, index) in value" :key="index">
-            <p
-              v-if="item.includes('：')"
-              :style="{ textIndent: `${-(item.split('：')[0].length + 1)}em`, paddingLeft: `${item.split('：')[0].length + 1}em` }"
-              class="lh-6 text-3 ws-pre-wrap text-left">
+            <div v-if="Array.isArray(item)" class="lh-5 text-3 ws-pre-wrap text-left">
+              <template v-for="(sItem, xIdx) in item" :key="sItem">
+                <template v-if="sItem.includes('：')">
+                  <span class="c-green-600" :class="{ 'ml-3': xIdx !== 0 }">{{ sItem.split('：')[0] }}：</span>
+                  <span class="c-#393d44">{{ sItem.split('：')[1] }}</span>
+                </template>
+                <span v-else>{{ sItem }}</span>
+              </template>
+            </div>
+            <p v-else-if="item.includes('：')" class="lh-5 text-3 ws-pre-wrap text-left">
               <span class="c-green-600">{{ item.split('：')[0] }}：</span>
               <span class="c-#393d44">{{ item.split('：')[1] }}</span>
             </p>
-            <p class="f-center lh-6 ws-pre-wrap text-left" :class="index !== 0 ? 'text-3 c-gray-500' : ''" v-else>
+            <p v-else class="lh-5 text-3 ws-pre-wrap text-left">
               <span>{{ item }}</span>
             </p>
           </template>
