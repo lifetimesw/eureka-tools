@@ -20,6 +20,7 @@ $arrowBorderColor: #d1d5db;
   word-wrap: break-word;
   word-break: break-word;
   z-index: 9999;
+  transition: all 0.1s ;
   &.tooltip-interactive {
     pointer-events: auto;
   }
