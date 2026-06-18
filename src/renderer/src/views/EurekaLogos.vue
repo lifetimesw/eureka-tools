@@ -174,7 +174,7 @@ function getInfoModel(rowData: Logos): string {
             class="f-center-center w-full h-full relative"
             @click="checkedLogos[item.order] = !checkedLogos[item.order]"
             v-title:bottom.template="getInfoModel(item)">
-            <img class="logos-icon w-full h-full" :src="getIcon('061833')" v-title:bottom.template="getInfoModel(item)" />
+            <img class=" w-full h-full " :src="getIcon('061833')" v-title:bottom.template="getInfoModel(item)" />
             <img v-if="checkedLogos[item.order]" class="absolute left-1 top-1" :src="getIcon(item.icon)" />
           </div>
           <div>
