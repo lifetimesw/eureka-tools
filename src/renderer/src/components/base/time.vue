@@ -232,15 +232,15 @@ onBeforeUnmount(() => {
         ref="minuteWindowRef"
         class="stone-time-window-datetime"
         :style="windowPosition">
-        <div class="datetime-date" ref="dateTimeDateRef">
+        <div ref="dateTimeDateRef" class="datetime-date">
           <div class="day-header">
             <span class="date-btn" @click="emit('update:modelValue', '')">清除</span>
             <div class="date-select">
-              <select class="year-select" v-model="dateSelect.year">
+              <select v-model="dateSelect.year" class="year-select">
                 <option v-for="(item, index) in yearArr" :key="index" :value="item">{{ item }}</option>
               </select>
               <span>年</span>
-              <select class="month-select" v-model="dateSelect.month">
+              <select v-model="dateSelect.month" class="month-select">
                 <option v-for="(item, index) in 12" :key="index" :value="item">
                   {{ item }}
                 </option>
@@ -268,19 +268,14 @@ onBeforeUnmount(() => {
             </table>
           </div>
         </div>
-        <div class="datetime-time" ref="dateTimeTimeRef">
-          <div class="hour-group" ref="hourRef">
-            <div v-for="(item, index) in 24" :key="index" class="hour" :class="{ active: dateSelect.hour === index }" @click="selectHour(index)">
+        <div ref="dateTimeTimeRef" class="datetime-time">
+          <div ref="hourRef" class="hour-group">
+            <div v-for="index in 24" :key="index" class="hour" :class="{ active: dateSelect.hour === index }" @click="selectHour(index)">
               <span>{{ String(index).padStart(2, '0') }}</span>
             </div>
           </div>
-          <div class="minute-group" ref="minuteRef">
-            <div
-              v-for="(item, index) in 60"
-              :key="index"
-              class="minute"
-              :class="{ active: dateSelect.minute === index }"
-              @click="selectMinute(index)">
+          <div ref="minuteRef" class="minute-group">
+            <div v-for="index in 60" :key="index" class="minute" :class="{ active: dateSelect.minute === index }" @click="selectMinute(index)">
               <span>{{ String(index).padStart(2, '0') }}</span>
             </div>
           </div>
