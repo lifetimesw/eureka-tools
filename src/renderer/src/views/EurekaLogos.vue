@@ -29,6 +29,16 @@ const checkedLogos = reactive<Record<number, boolean>>({})
 eurekaLogos.forEach((item) => {
   checkedLogos[item.order] = true
 })
+function resetChecked(): void {
+  eurekaLogos.forEach((item) => {
+    checkedLogos[item.order] = true
+  })
+}
+function uncheckAll(): void {
+  eurekaLogos.forEach((item) => {
+    checkedLogos[item.order] = false
+  })
+}
 
 const filterText = ref('')
 
@@ -162,27 +172,27 @@ function getInfoModel(rowData: Logos): string {
 <template>
   <div class="w-full h-full px-1em pb-1em">
     <div class="w-full h-3em f-center-center gap-2">
-      <input type="text" class="normal-input" placeholder="检索碎晶/文理 ⮠" @keyup.enter="handleFilter" />
+      <input type="text" class="normal-input" placeholder="检索碎晶/文理图鉴 ⮠" @keyup.enter="handleFilter" />
       <stone-type v-model="logosType" :list="logosTypeList"></stone-type>
     </div>
     <div class="w-full h-[calc(100%-3em)]">
-      <div class="w-full h-full f-start-center" v-if="logosType === 1">
+      <div v-if="logosType === 1" class="w-full h-full f-center-start-col">
+        <div class="f-center-center py-1em gap-4">
+          <span class="c-blue cursor-pointer" @click="resetChecked">显示所有</span>
+          <span class="c-blue cursor-pointer" @click="uncheckAll">隐藏所有</span>
+        </div>
         <div class="logos-box">
           <div
             v-for="item in eurekaLogos"
             :key="item.order"
-            class="f-center-center w-full h-full relative"
-            @click="checkedLogos[item.order] = !checkedLogos[item.order]"
-            v-title:bottom.template="getInfoModel(item)">
-            <img class=" w-full h-full " :src="getIcon('061833')" v-title:bottom.template="getInfoModel(item)" />
-            <img v-if="checkedLogos[item.order]" class="absolute left-1 top-1" :src="getIcon(item.icon)" />
-          </div>
-          <div>
-            <span></span>
+            v-title:bottom.template="getInfoModel(item)"
+            class="f-center-center w-full h-full bg-slate-100 shadow-[inset_0_0_12px_rgba(0,0,0,0.25)] rounded-md cursor-pointer"
+            @click="checkedLogos[item.order] = !checkedLogos[item.order]">
+            <img v-if="checkedLogos[item.order]" class="w-[90%] h-[90%] select-none" :src="getIcon(item.icon)" />
           </div>
         </div>
       </div>
-      <div class="w-full h-full" v-else-if="logosType === 2">
+      <div v-else-if="logosType === 2" class="w-full h-full">
         <stone-table :table-data="tableData" class="cold" fix-head>
           <template #icon="{ value }">
             <img class="icon icon-xxl" :src="getIcon(value)" />
@@ -225,7 +235,7 @@ function getInfoModel(rowData: Logos): string {
           </template>
         </stone-table>
       </div>
-      <div class="w-full h-full" v-else-if="logosType === 3">
+      <div v-else-if="logosType === 3" class="w-full h-full">
         <stone-table :table-data="tableData" class="cold" fix-head>
           <template #name="{ row, value }">
             <p class="if-center">

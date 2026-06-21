@@ -20,7 +20,7 @@ $arrowBorderColor: #d1d5db;
   word-wrap: break-word;
   word-break: break-word;
   z-index: 9999;
-  transition: all 0.1s ;
+  transition: all 0.1s;
   &.tooltip-interactive {
     pointer-events: auto;
   }
@@ -59,14 +59,15 @@ $arrowBorderColor: #d1d5db;
   }
   .stone-title-tooltip-text {
     max-width: 20em;
+    white-space: pre-line;
   }
   .stone-title-tooltip-template {
     width: auto;
     height: auto;
-    padding: 0.25em 0;
     .logos-tooltip {
       width: 25em;
       height: auto;
+      padding: 0.25em 0;
       .tooltip-header {
         @include flex(stretch, flex-start);
         width: 100%;

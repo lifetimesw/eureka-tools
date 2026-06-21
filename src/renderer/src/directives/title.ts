@@ -1,19 +1,27 @@
 // src/components/directives/title.ts
-import type { Directive, DirectiveBinding } from 'vue'
+import type { App, Directive, DirectiveBinding } from 'vue'
 
 declare global {
   interface HTMLElement {
-    _tooltipCleanup?: () => void
-    _currentTooltip?: HTMLDivElement
+    _eventCleanup?: () => void
     _titleValue?: string
     _position?: Placement
     _hasTitleDirective?: boolean
-    _hideTimeout?: number
     _interactive?: boolean
     _template?: boolean
   }
 }
 type Placement = 'top' | 'bottom' | 'left' | 'right'
+interface GlobalToolTip {
+  tooltip: HTMLDivElement | null
+  owner: HTMLElement | null
+  timeout: number
+}
+const globalToolTip: GlobalToolTip = {
+  tooltip: null,
+  owner: null,
+  timeout: 0,
+}
 
 export const vTitle: Directive = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
@@ -28,42 +36,71 @@ export const vTitle: Directive = {
     bindEvents(el)
   },
   updated(el: HTMLElement, binding: DirectiveBinding) {
-    // 1. 更新存储的值
     const oldValue = el._titleValue
     el._titleValue = binding.value
-    // 如果值变空，隐藏 Tooltip
-    if (!binding.value) {
-      if (el._currentTooltip) {
-        if (el._currentTooltip) {
-          if (el._currentTooltip.parentNode) {
-            el._currentTooltip.parentNode.removeChild(el._currentTooltip)
-          }
-          el._currentTooltip = undefined
-        }
-      }
-      return
-    }
 
-    if (oldValue !== binding.value && el._currentTooltip) {
-      updateCurrentTooltip(el, binding.value)
+    if (oldValue !== binding.value && globalToolTip.owner === el) {
+      updateCurrentTooltip(binding.value)
     }
   },
   unmounted(el: HTMLElement) {
-    unbindEvents(el)
+    if (globalToolTip.owner === el) {
+      destroyTooltip()
+    }
     el._hasTitleDirective = false
-    el._currentTooltip = undefined
     el._titleValue = undefined
-    el._tooltipCleanup = undefined
+    unbindEvents(el)
   },
 }
+
+function onTooltipMouseEnter(): void {
+  if (globalToolTip.timeout) {
+    clearTimeout(globalToolTip.timeout)
+    globalToolTip.timeout = 0
+  }
+}
+
+function destroyTooltip(): void {
+  if (globalToolTip.tooltip) {
+    if (globalToolTip.tooltip.parentNode) {
+      globalToolTip.tooltip.parentNode.removeChild(globalToolTip.tooltip)
+    }
+    globalToolTip.tooltip.removeEventListener('mouseenter', onTooltipMouseEnter)
+    globalToolTip.tooltip.removeEventListener('mouseleave', hideTooltip)
+    globalToolTip.tooltip = null
+    globalToolTip.owner = null
+  }
+
+  if (globalToolTip.timeout) {
+    clearTimeout(globalToolTip.timeout)
+    globalToolTip.timeout = 0
+  }
+}
+
+function hideTooltip(): void {
+  if (globalToolTip.timeout) {
+    clearTimeout(globalToolTip.timeout)
+    globalToolTip.timeout = 0
+  }
+  if (globalToolTip.tooltip) {
+    const timeout = setTimeout(() => {
+      destroyTooltip()
+    }, 150) as unknown as number
+    globalToolTip.timeout = timeout
+  }
+}
+
 function bindEvents(el: HTMLElement): void {
   const showTooltip = (): void => {
-    if (el._hideTimeout) {
-      clearTimeout(el._hideTimeout)
-      el._hideTimeout = undefined
+    if (globalToolTip.tooltip) {
+      clearTimeout(globalToolTip.timeout)
+      globalToolTip.timeout = 0
+      globalToolTip.owner = el
+      updateCurrentTooltip(el._titleValue ?? '')
       return
-    }
-    if (el._currentTooltip) {
+    } else if (globalToolTip.owner === el) {
+      clearTimeout(globalToolTip.timeout)
+      globalToolTip.timeout = 0
       return
     }
 
@@ -77,17 +114,17 @@ function bindEvents(el: HTMLElement): void {
     const arrow = document.createElement('div')
     arrow.className = 'stone-title-tooltip-arrow'
     tooltip.appendChild(arrow)
+
+    const templateContent = document.createElement('div')
+    templateContent.className = 'stone-title-tooltip-template'
+    const textContent = document.createElement('div')
+    textContent.className = 'stone-title-tooltip-text'
     if (el._template) {
-      const content = document.createElement('div')
-      content.className = 'stone-title-tooltip-template'
-      content.innerHTML = value
-      tooltip.appendChild(content)
+      templateContent.innerHTML = value
+      tooltip.appendChild(templateContent)
     } else {
-      const content = document.createElement('div')
-      content.className = 'stone-title-tooltip-text'
-      content.textContent = value
-      content.style.whiteSpace = 'pre-line'
-      tooltip.appendChild(content)
+      textContent.textContent = value
+      tooltip.appendChild(textContent)
     }
 
     tooltip.style.opacity = '0'
@@ -97,70 +134,31 @@ function bindEvents(el: HTMLElement): void {
     tooltip.style.zIndex = '9999'
 
     document.body.appendChild(tooltip)
-    el._currentTooltip = tooltip
+    globalToolTip.tooltip = tooltip
+    globalToolTip.owner = el
     if (el._interactive) {
       tooltip.addEventListener('mouseenter', onTooltipMouseEnter)
       tooltip.addEventListener('mouseleave', hideTooltip)
     }
 
     requestAnimationFrame(() => {
-      if (!el._currentTooltip) {
+      if (!globalToolTip.tooltip) {
         return
       }
       calculateAndShow(el, tooltip)
     })
   }
-  const hideTooltip = (): void => {
-    if (el._hideTimeout) {
-      clearTimeout(el._hideTimeout)
-    }
-    if (el._currentTooltip) {
-      el._hideTimeout = setTimeout(() => {
-        if (el._currentTooltip && el._currentTooltip.parentNode) {
-          el._currentTooltip.removeEventListener('mouseenter', onTooltipMouseEnter)
-          el._currentTooltip.removeEventListener('mouseleave', hideTooltip)
-          el._currentTooltip.parentNode.removeChild(el._currentTooltip)
-        }
-        if (el._currentTooltip?.parentNode === null) {
-          el._currentTooltip = undefined
-        }
-        el._hideTimeout = undefined
-      }, 100) as unknown as number
-    }
-  }
-  const onTooltipMouseEnter = (): void => {
-    if (el._hideTimeout) {
-      clearTimeout(el._hideTimeout)
-      el._hideTimeout = undefined
-    }
-  }
-  const onScrollOrResize = (): void => {
-    if (el._currentTooltip) {
-      // 强制销毁
-      if (el._currentTooltip.parentNode) {
-        el._currentTooltip.parentNode.removeChild(el._currentTooltip)
-      }
-      el._currentTooltip = undefined
-    }
-  }
+
   el.addEventListener('mouseenter', showTooltip)
   el.addEventListener('mouseleave', hideTooltip)
-  window.addEventListener('scroll', onScrollOrResize, true)
-  window.addEventListener('resize', onScrollOrResize)
 
-  el._tooltipCleanup = () => {
+  el._eventCleanup = () => {
     el.removeEventListener('mouseenter', showTooltip)
     el.removeEventListener('mouseleave', hideTooltip)
 
-    window.removeEventListener('scroll', onScrollOrResize, true)
-    window.removeEventListener('resize', onScrollOrResize)
-
-    if (el._currentTooltip && el._currentTooltip.parentNode) {
-      el._currentTooltip.removeEventListener('mouseenter', onTooltipMouseEnter)
-      el._currentTooltip.removeEventListener('mouseleave', hideTooltip)
-      el._currentTooltip.parentNode.removeChild(el._currentTooltip)
+    if (globalToolTip.tooltip && globalToolTip.owner === el) {
+      destroyTooltip()
     }
-    el._currentTooltip = undefined
   }
 }
 
@@ -206,7 +204,6 @@ function calculateAndShow(el: HTMLElement, tooltip: HTMLDivElement): void {
       fits: spaceLeft >= tooltipRect.width + gap,
     },
   }
-  // 3. 按照指定优先级选择方向: 上 -> 右 -> 下 -> 左
   const preferredOrder: Placement[] = ['top', 'right', 'bottom', 'left']
   if (el._position) {
     preferredOrder.unshift(el._position)
@@ -246,10 +243,10 @@ function calculateAndShow(el: HTMLElement, tooltip: HTMLDivElement): void {
 
   tooltip.style.left = `${left}px`
   tooltip.style.top = `${top}px`
-  arrow.classList.remove('top', 'bottom', 'left', 'right')
-  arrow.classList.add(placement)
 
   if (arrow) {
+    arrow.classList.remove('top', 'bottom', 'left', 'right')
+    arrow.classList.add(placement)
     const elCenterX = elRect.left + elRect.width / 2
     const elCenterY = elRect.top + elRect.height / 2
     const arrowRect = arrow.getBoundingClientRect()
@@ -290,31 +287,52 @@ function calculateAndShow(el: HTMLElement, tooltip: HTMLDivElement): void {
   // 显示动画
   // 稍微延迟一点添加 visible，确保 transition 生效
   setTimeout(() => {
-    if (el._currentTooltip) {
-      el._currentTooltip.style.visibility = 'visible'
-      el._currentTooltip.style.opacity = '1'
+    if (globalToolTip.tooltip) {
+      globalToolTip.tooltip.style.visibility = 'visible'
+      globalToolTip.tooltip.style.opacity = '1'
     }
   }, 0)
 }
 
-function updateCurrentTooltip(el: HTMLElement, newValue: string): void {
-  if (!el._currentTooltip) {
+function updateCurrentTooltip(newValue: string): void {
+  if (!globalToolTip.tooltip || !globalToolTip.owner) {
     return
   }
 
-  el._currentTooltip.textContent = newValue
+  if (newValue === '') {
+    destroyTooltip()
+    return
+  }
+
+  if (globalToolTip.owner._template) {
+    const templateContent = globalToolTip.tooltip.querySelector('.stone-title-tooltip-template')
+    if (templateContent) {
+      templateContent.innerHTML = newValue
+    }
+  } else {
+    const textContent = globalToolTip.tooltip.querySelector('.stone-title-tooltip-text')
+    if (textContent) {
+      textContent.textContent = newValue
+    }
+  }
 
   requestAnimationFrame(() => {
-    if (el._currentTooltip) {
-      el._currentTooltip.classList.remove('top', 'bottom', 'left', 'right')
-      calculateAndShow(el, el._currentTooltip)
+    if (globalToolTip.tooltip && globalToolTip.owner) {
+      globalToolTip.tooltip.classList.remove('top', 'bottom', 'left', 'right')
+      calculateAndShow(globalToolTip.owner, globalToolTip.tooltip)
     }
   })
 }
 
 function unbindEvents(el: HTMLElement): void {
-  if (el._tooltipCleanup) {
-    el._tooltipCleanup()
-    el._tooltipCleanup = undefined
+  if (el._eventCleanup) {
+    el._eventCleanup()
+    el._eventCleanup = undefined
   }
+}
+
+export default {
+  install(app: App) {
+    app.directive('title', vTitle)
+  },
 }
