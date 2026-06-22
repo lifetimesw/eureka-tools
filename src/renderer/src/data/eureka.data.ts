@@ -1,4 +1,15 @@
-import type { EurekaAreaId, Fate, Logos, LogosCrystal, Variant, WeatherRate } from '@renderer/types/eureka.type'
+import type { EurekaAreaId, Fate, Weather, Logos, LogosCrystal, Variant, WeatherRate, WeatherInfo, VariantType, VariantElement } from '@renderer/types/eureka.type'
+
+export const eurekaIcons: Record<VariantType & VariantElement, string> = {
+  adaptation: '215884',
+  mutation: '215885',
+  fire: '060651',
+  wind: '060653',
+  lightning: '060655',
+  water: '060656',
+  ice: '060652',
+  earth: '060654',
+}
 
 export const eurekaAreaNames: Record<EurekaAreaId, string> = {
   'area.EurekaAnemos': '常风之地',
@@ -276,35 +287,49 @@ export const eurekaAreaVariants: Record<EurekaAreaId, Variant[]> = {
   ],
 }
 
+export const eurekaWeatherMap: Record<Weather, WeatherInfo> = {
+  unknown: { name: '未知', icon: '060042' },
+  fairSkies: { name: '晴朗', icon: '060202' },
+  gales: { name: '强风', icon: '060206' },
+  showers: { name: '暴雨', icon: '060207' },
+  snow: { name: '小雪', icon: '060215' },
+  fog: { name: '薄雾', icon: '060204' },
+  heatWaves: { name: '热浪', icon: '060214' },
+  thunder: { name: '打雷', icon: '060209' },
+  blizzards: { name: '暴雪', icon: '060216' },
+  umbralWind: { name: '灵风', icon: '060219' },
+  gloom: { name: '妖雾', icon: '060218' },
+  thunderstorms: { name: '雷雨', icon: '060210' },
+}
 export const eurekaAreaWeatherRates: Record<EurekaAreaId, WeatherRate[]> = {
   'area.EurekaAnemos': [
-    { rate: 30, name: '晴朗', weather: 'fairSkies', color: '' },
-    { rate: 30, name: '强风', weather: 'gales', color: '' },
-    { rate: 30, name: '暴雨', weather: 'showers', color: '' },
-    { rate: -1, name: '小雪', weather: 'snow', color: '' },
+    { rate: 30, weather: 'fairSkies' },
+    { rate: 30, weather: 'gales' },
+    { rate: 30, weather: 'showers' },
+    { rate: -1, weather: 'snow' },
   ],
   'area.EurekaPagos': [
-    { rate: 10, name: '晴朗', weather: 'fairSkies', color: '' },
-    { rate: 18, name: '薄雾', weather: 'fog', color: '' },
-    { rate: 18, name: '热浪', weather: 'heatWaves', color: '' },
-    { rate: 18, name: '小雪', weather: 'snow', color: '' },
-    { rate: 18, name: '打雷', weather: 'thunder', color: '' },
-    { rate: -1, name: '暴雪', weather: 'blizzards', color: '' },
+    { rate: 10, weather: 'fairSkies' },
+    { rate: 18, weather: 'fog' },
+    { rate: 18, weather: 'heatWaves' },
+    { rate: 18, weather: 'snow' },
+    { rate: 18, weather: 'thunder' },
+    { rate: -1, weather: 'blizzards' },
   ],
   'area.EurekaPyros': [
-    { rate: 10, name: '晴朗', weather: 'fairSkies', color: '' },
-    { rate: 18, name: '热浪', weather: 'heatWaves', color: '' },
-    { rate: 18, name: '打雷', weather: 'thunder', color: '' },
-    { rate: 18, name: '暴雪', weather: 'blizzards', color: '' },
-    { rate: 18, name: '灵风', weather: 'umbralWind', color: '' },
-    { rate: -1, name: '小雪', weather: 'snow', color: '' },
+    { rate: 10, weather: 'fairSkies' },
+    { rate: 18, weather: 'heatWaves' },
+    { rate: 18, weather: 'thunder' },
+    { rate: 18, weather: 'blizzards' },
+    { rate: 18, weather: 'umbralWind' },
+    { rate: -1, weather: 'snow' },
   ],
   'area.EurekaHydatos': [
-    { rate: 12, name: '晴朗', weather: 'fairSkies', color: '' },
-    { rate: 22, name: '暴雨', weather: 'showers', color: '' },
-    { rate: 22, name: '妖雾', weather: 'gloom', color: '' },
-    { rate: 22, name: '雷雨', weather: 'thunderstorms', color: '' },
-    { rate: -1, name: '小雪', weather: 'snow', color: '' },
+    { rate: 12, weather: 'fairSkies' },
+    { rate: 22, weather: 'showers' },
+    { rate: 22, weather: 'gloom' },
+    { rate: 22, weather: 'thunderstorms' },
+    { rate: -1, weather: 'snow' },
   ],
 }
 
@@ -389,7 +414,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 7,
       title: '强风妖精',
       aliases: ['强风元精'],
-      triggerCondition: { monster: '台风元精', night: false, weather: { name: '强风', weather: 'gales' } },
+      triggerCondition: { monster: '台风元精', night: false, weather: 'gales' },
       description: '',
       normalRewards: [
         { name: '常风地带上锁的宝箱', icon: '025997', quantity: 11 },
@@ -551,7 +576,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 20,
       title: '暴风魔王',
       aliases: ['帕祖祖', 'pzz', '岛主'],
-      triggerCondition: { monster: '暗影幽灵', night: true, weather: { name: '强风', weather: 'gales' } },
+      triggerCondition: { monster: '暗影幽灵', night: true, weather: 'gales' },
       description: '',
       normalRewards: [
         { name: '常风地带上锁的宝箱', icon: '025997', quantity: 25 },
@@ -619,7 +644,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 24,
       title: '融雪的化身',
       aliases: [],
-      triggerCondition: { monster: '融雪元精', night: false, weather: { name: '薄雾', weather: 'fog' } },
+      triggerCondition: { monster: '融雪元精', night: false, weather: 'fog' },
       description: '',
       normalRewards: [
         { name: '恒冰地带上锁的宝箱', icon: '025997', quantity: 3 },
@@ -679,7 +704,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 29,
       title: '圆桌的雾王',
       aliases: ['螃蟹', 'px'],
-      triggerCondition: { monster: '瓦尔利螯陆蟹', night: false, weather: { name: '薄雾', weather: 'fog' } },
+      triggerCondition: { monster: '瓦尔利螯陆蟹', night: false, weather: 'fog' },
       description: '',
       normalRewards: [
         { name: '恒冰地带上锁的宝箱', icon: '025997', quantity: 6 },
@@ -716,7 +741,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 32,
       title: '雷云的魔兽',
       aliases: ['贝爷'],
-      triggerCondition: { monster: '虚无小龙', night: false, weather: { name: '打雷', weather: 'thunder' } },
+      triggerCondition: { monster: '虚无小龙', night: false, weather: 'thunder' },
       description: '',
       normalRewards: [
         { name: '恒冰地带上锁的宝箱', icon: '025997', quantity: 7 },
@@ -732,7 +757,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 33,
       title: '太阳的使者',
       aliases: ['荷鲁斯', 'hls'],
-      triggerCondition: { monster: '虚无薇薇尔飞龙', night: false, weather: { name: '热浪', weather: 'heatWaves' } },
+      triggerCondition: { monster: '虚无薇薇尔飞龙', night: false, weather: 'heatWaves' },
       description: '',
       normalRewards: [
         { name: '恒冰地带上锁的宝箱', icon: '025997', quantity: 8 },
@@ -756,7 +781,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 35,
       title: '模仿犯',
       aliases: ['凯西', 'kx', '老婆'],
-      triggerCondition: { monster: '阿米雷戴', night: false, weather: { name: '暴雪', weather: 'blizzards' } },
+      triggerCondition: { monster: '阿米雷戴', night: false, weather: 'blizzards' },
       description: '',
       normalRewards: [
         { name: '恒冰地带上锁的宝箱', icon: '025997', quantity: 9 },
@@ -798,7 +823,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 36,
       title: '狰狞的雷兽',
       aliases: ['雷兽'],
-      triggerCondition: { monster: '雷暴元精', night: false, weather: { name: '打雷', weather: 'thunder' } },
+      triggerCondition: { monster: '雷暴元精', night: false, weather: 'thunder' },
       description: '',
       normalRewards: [
         { name: '涌火地带上锁的宝箱', icon: '025997', quantity: 2 },
@@ -840,7 +865,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 39,
       title: '图书守护者',
       aliases: ['阿福'],
-      triggerCondition: { monster: '过期魔导书', night: false, weather: { name: '灵风', weather: 'umbralWind' } },
+      triggerCondition: { monster: '过期魔导书', night: false, weather: 'umbralWind' },
       description: '',
       normalRewards: [
         { name: '涌火地带上锁的宝箱', icon: '025997', quantity: 3 },
@@ -934,7 +959,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 46,
       title: '雷兽统领',
       aliases: ['雷军'],
-      triggerCondition: { monster: '遗弃象魔', night: false, weather: { name: '打雷', weather: 'thunder' } },
+      triggerCondition: { monster: '遗弃象魔', night: false, weather: 'thunder' },
       description: '',
       normalRewards: [
         { name: '涌火地带上锁的宝箱', icon: '025997', quantity: 7 },
@@ -992,7 +1017,7 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       level: 50,
       title: '嘲讽的霜狼',
       aliases: ['狼', '狗子', 'lw'],
-      triggerCondition: { monster: '涌火狗灵', night: false, weather: { name: '暴雪', weather: 'blizzards' } },
+      triggerCondition: { monster: '涌火狗灵', night: false, weather: 'blizzards' },
       description: '',
       normalRewards: [
         { name: '涌火地带上锁的宝箱', icon: '025997', quantity: 9 },
@@ -1007,8 +1032,8 @@ export const eurekaAreaFates: Record<EurekaAreaId, Fate[]> = {
       name: '彭忒西勒亚',
       level: 50,
       title: '炎蝶的女王',
-      aliases: ['女人', '小彭', '岛主'],
-      triggerCondition: { monster: '瓦尔血飞蛾', night: false, weather: { name: '热浪', weather: 'heatWaves' } },
+      aliases: ['彭女士', '女人', '小彭', '岛主'],
+      triggerCondition: { monster: '瓦尔血飞蛾', night: false, weather: 'heatWaves' },
       description: '',
       normalRewards: [
         { name: '涌火地带上锁的宝箱', icon: '025997', quantity: 9 },

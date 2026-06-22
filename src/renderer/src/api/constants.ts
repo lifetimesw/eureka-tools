@@ -5,4 +5,5 @@ export default {
     universalis: 'https://universalis.app',
     garlandtools: 'https://garlandtools.cn',
   },
+  unknownIcon: '060042',
 }

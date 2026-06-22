@@ -2,6 +2,7 @@
 import { eurekaLogosCrystal, eurekaLogos } from '@renderer/data/eureka.data'
 import { getIcon } from '@renderer/api/request'
 import { Logos } from '@renderer/types/eureka.type'
+import constants from '@renderer/api/constants'
 
 const logosType = ref(1)
 const logosTypeList = [
@@ -117,14 +118,14 @@ function getInfoModel(rowData: Logos): string {
           .map((item) => {
             if (Array.isArray(item)) {
               return `<p class="logos-desc">
-                 ${item
-                   .map((x, i) =>
-                     x.includes('：')
-                       ? `<span class="c-green-600 ${i > 0 ? 'ml-2' : 0}">${x.split('：')[0]}：</span>
-                      <span>${x.split('：')[1]}</span>`
-                       : `<span>${x}</span>`
-                   )
-                   .join('')}
+                ${item
+                  .map((x, i) =>
+                    x.includes('：')
+                      ? `<span class="c-green-600 ${i > 0 ? 'ml-2' : 0}">${x.split('：')[0]}：</span>
+                    <span>${x.split('：')[1]}</span>`
+                      : `<span>${x}</span>`
+                  )
+                  .join('')}
                 </p>`
             }
             return `<p class="logos-desc">
@@ -185,17 +186,17 @@ function getInfoModel(rowData: Logos): string {
           <div
             v-for="item in eurekaLogos"
             :key="item.order"
-            v-title:bottom.template="getInfoModel(item)"
-            class="f-center-center w-full h-full bg-slate-100 shadow-[inset_0_0_12px_rgba(0,0,0,0.25)] rounded-md cursor-pointer"
+            class="f-center-center w-full h-full rounded-md overflow-hidden cursor-pointer relative"
             @click="checkedLogos[item.order] = !checkedLogos[item.order]">
-            <img v-if="checkedLogos[item.order]" class="w-[90%] h-[90%] select-none" :src="getIcon(item.icon)" />
+            <img v-if="checkedLogos[item.order]" class="select-none" :src="getIcon(item.icon)" v-title:bottom.template="getInfoModel(item)" />
+            <img v-else class="select-none" :src="getIcon(constants.unknownIcon)" />
           </div>
         </div>
       </div>
       <div v-else-if="logosType === 2" class="w-full h-full">
         <stone-table :table-data="tableData" class="cold" fix-head>
           <template #icon="{ value }">
-            <img class="icon icon-xxl" :src="getIcon(value)" />
+            <img class="rounded-md select-none" :src="getIcon(value)" />
           </template>
           <template #synthesisRecipes="{ value }">
             <div v-for="(child, index) in value" :key="index" class="f-center">
@@ -265,11 +266,11 @@ function getInfoModel(rowData: Logos): string {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .logos-box {
   display: grid;
-  grid-template-columns: repeat(10, 3em);
-  grid-template-rows: repeat(6, 3em);
-  gap: 0.25em;
+  grid-template-columns: repeat(10, auto);
+  grid-template-rows: repeat(6, auto);
+  gap: 0.5em;
 }
 </style>

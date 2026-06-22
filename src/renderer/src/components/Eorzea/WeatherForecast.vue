@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { getIcon } from '@renderer/api/request'
 import { useWeatherForecast, WeatherForecastProps, FORECAST_STATUS } from '@renderer/hooks/useWeatherForecast'
-import { WeatherRate } from '@renderer/types/eureka.type'
+import { WeatherInfo, WeatherRate } from '@renderer/types/eureka.type'
 
 import { EorzeaClock } from '@renderer/utils/clock.util'
 import { Eureka } from '@renderer/utils/eureka.util'
@@ -29,7 +30,7 @@ const weatherMap = weatherList.reduce(
     acc[cur.weather] = cur
     return acc
   },
-  {} as Record<string, WeatherRate>
+  {} as Record<string, WeatherInfo & WeatherRate>
 )
 const weatherLockNames = computed(() => {
   return weatherLock.map((item) => weatherMap[item].name)
@@ -44,13 +45,14 @@ defineExpose({ resize })
         <span class="text-5">{{ areaName }}</span>
         <i class="cursor-pointer ml-2 icon-m i-lucide:copy" @click="copyForeastWeather"></i>
         <div class="ml-4em gap-2 if-start-start">
-          <i
+          <img
             v-for="item in weatherList"
             :key="item.weather"
             v-title="item.name"
             class="cursor-pointer icon icon-m"
-            :class="[`icon-eureka-${item.weather}`, { 'weather-active': weatherLock.includes(item.weather) }]"
-            @click="handleLock(item.weather)"></i>
+            :class="{ 'weather-active': weatherLock.includes(item.weather) }"
+            :src="getIcon(item.icon)"
+            @click="handleLock(item.weather)" />
         </div>
         <span class="cursor-default font-400 ml-2 text-3">点击筛选</span>
         <span v-show="weatherLockNames.length" class="cursor-default font-400 ml-2 text-3 text-orange-500">({{ weatherLockNames.join(', ') }})</span>
@@ -77,7 +79,7 @@ defineExpose({ resize })
         @contextmenu.prevent.stop="copyWeather(item, index)">
         <span class="foreast-lt-date">{{ item.localDateStr }}</span>
         <div class="foreast-weather">
-          <i class="icon mr-1" :class="`icon-eureka-${item.weather}`"></i>
+          <img class="icon mr-1" :src="getIcon(item.icon)" />
           <span>{{ item.name }}</span>
         </div>
         <span class="foreast-lt-time">{{ item.localTimeStr }}</span>

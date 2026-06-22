@@ -18,6 +18,7 @@ export default defineConfig({
     'i-lucide:sun',
     'i-lucide:moon',
     'i-lucide:badge-question-mark',
+    'ws-pre-wrap',
   ],
   presets: [
     presetWind3(), // 样式预设方案

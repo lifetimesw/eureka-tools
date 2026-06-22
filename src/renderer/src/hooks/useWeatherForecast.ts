@@ -115,7 +115,7 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
       areaId: props.areaId,
       areaName,
       currentTime: clockStore.eorzeaTimeStr,
-      forecasts,
+      forecasts: forecasts.slice(0, 100),
       timeRange: {
         start: forecasts[0]?.time || '',
         end: forecasts[forecasts.length - 1]?.time || '',

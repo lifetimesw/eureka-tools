@@ -188,6 +188,10 @@ function updateDate(): void {
 function isCurrent(rowData: Day): boolean {
   return rowData.day === dateSelect.day && rowData.month === dateSelect.month && rowData.year === dateSelect.year
 }
+function isToday(rowData: Day): boolean {
+  const today = new Date()
+  return rowData.day === today.getDate() && rowData.month === today.getMonth() + 1 && rowData.year === today.getFullYear()
+}
 
 watch(
   () => [props.type, props.modelValue] as const,
@@ -202,19 +206,24 @@ watch(
   { immediate: true }
 )
 
+function handleClickFn(event: Event): void {
+  if (currentWindow.value && !dateRef.value.contains(event.target) && windowRef.value && !windowRef.value.contains(event.target)) {
+    currentWindow.value = ''
+  }
+}
 function hideFn(event: Event): void {
-  if (currentWindow && !dateRef.value.contains(event.target)) {
+  if (currentWindow.value && !dateRef.value.contains(event.target) && windowRef.value && !windowRef.value.contains(event.target)) {
     currentWindow.value = ''
   }
 }
 
 onMounted(() => {
-  document.addEventListener('click', hideFn)
-  document.addEventListener('scroll', hideFn, { capture: true })
+  document.addEventListener('click', handleClickFn)
+  document.addEventListener('scroll', hideFn, true)
 })
 onBeforeUnmount(() => {
-  document.removeEventListener('click', hideFn)
-  document.removeEventListener('scroll', hideFn, { capture: true })
+  document.removeEventListener('click', handleClickFn)
+  document.removeEventListener('scroll', hideFn, true)
 })
 </script>
 <template>
@@ -259,7 +268,11 @@ onBeforeUnmount(() => {
               <tbody>
                 <tr v-for="(week, index) in dayArr" :key="index">
                   <td v-for="(dItem, dIndex) in week" :key="`${index}_${dIndex}`">
-                    <span v-if="dItem.isCurrentMonth" class="current-month" :class="{ active: isCurrent(dItem) }" @click="selectDay(dItem.day)">
+                    <span
+                      v-if="dItem.isCurrentMonth"
+                      class="current-month"
+                      :class="{ active: isCurrent(dItem), today: isToday(dItem) }"
+                      @click="selectDay(dItem.day)">
                       {{ dItem.day }}
                     </span>
                   </td>

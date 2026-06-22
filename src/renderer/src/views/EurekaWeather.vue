@@ -108,7 +108,7 @@ onUnmounted(() => {
       <span>结束：</span>
       <stone-time type="minute" v-model="endTime" class="mr-1em" />
       <button class="normal-button" @click="resetTime">回到当前</button>
-      <i v-title="'右键点击可复制天气'" class="ml-1em icon-l i-lucide:circle-question-mark"></i>
+      <i v-title="'右键点击可复制天气\n时间跨度过大时，仅保留前100项'" class="ml-1em icon-l i-lucide:circle-question-mark"></i>
     </div>
     <div class="h-[calc(100%-3.5em)] w-full px-1em overflow-y-auto">
       <WeatherForecast v-for="item in areaList" ref="weatherRefs" :key="item" :area-id="item" :start-clock="startClock" :end-clock="endClock" />

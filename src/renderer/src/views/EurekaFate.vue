@@ -6,6 +6,7 @@ import { eurekaAreaFates } from '@renderer/data/eureka.data'
 import { EorzeaWeather } from '@renderer/utils/weather.util'
 import { useClockStore } from '@renderer/stores'
 import { getIcon } from '@renderer/api/request'
+import { Eureka } from '@renderer/utils/eureka.util'
 
 const clockStore = useClockStore()
 
@@ -21,9 +22,9 @@ const columns = [
   { key: 'name', title: '名称' },
   { key: 'aliases', title: '别称' },
   { key: 'triggerCondition', title: '触发方式' },
+  { key: 'triggerTime', title: '触发状态', class: 'w-14em' },
   { key: 'normalRewards', title: '通常奖励' },
   { key: 'specialRewards', title: '特殊奖励' },
-  { key: 'triggerTime', title: '触发状态', class: 'w-14em' },
 ]
 
 const triggerMap = reactive<Record<EurekaAreaId, Record<string, string>>>({
@@ -38,12 +39,14 @@ const tableData = computed(() => {
   const fateList = eurekaAreaFates[areaId.value]
   const areaTrigger = triggerMap[areaId.value] || {}
   const dataArr = fateList.map((fate) => {
+    const weather = fate.triggerCondition.weather
     return {
       level: fate.level,
       title: fate.title,
       name: fate.name,
       aliases: fate.aliases,
       triggerCondition: fate.triggerCondition,
+      triggerWeather: weather ? Eureka.getWeatherInfo(weather) : weather,
       normalRewards: fate.normalRewards,
       specialRewards: fate.specialRewards,
       description: fate.description,
@@ -83,8 +86,8 @@ function copyHistory(trigger: boolean): void {
       return name
     })
     .join('—')
-  const type = trigger ? '【已触发】' : '【未触发】'
-  window.api.clipboard.writeText(type + content).then((result: IpcResponse) => {
+  const type = trigger ? '【已触发】' : '【可触发】'
+  window.api.clipboard.writeText(type + (content || '无')).then((result: IpcResponse) => {
     if (result.success) {
       StoneMessage.success('复制成功')
     }
@@ -175,19 +178,19 @@ onMounted(async () => {
         <option v-for="item in areaList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
       <div class="gap-2 if-start-start">
-        <i
+        <img
           v-for="(item, index) in forecastWeather"
           :key="index"
+          :src="getIcon(item.icon)"
           v-title:bottom.interactive="getWeatherTitle(item, index)"
           class="cursor-pointer icon icon-l rounded-full"
-          :class="[`icon-eureka-${item.weather}`, index === 0 ? 'b-2 b-solid b-orange-500' : '']">
-        </i>
+          :class="[index === 0 ? 'b-2 b-solid b-orange-500' : '']" />
       </div>
       <button class="normal-button" @click="copyHistory(true)" v-title:bottom="triggeredHistory">复制已触发</button>
       <button class="normal-button" @click="copyHistory(false)" v-title:bottom="notTriggeredHistory">复制未触发</button>
     </div>
     <div class="w-full h-[calc(100%-3em)]">
-      <stone-table :table-data="tableData" class="cold" :fixed="[2, 1]" fix-head>
+      <stone-table :table-data="tableData" class="cold" :fixed="[2, 0]" fix-head>
         <template #head="{ column }">
           <div v-if="column.key === 'triggerTime'" class="f-center-center">
             <span>{{ column.title }}</span>
@@ -201,26 +204,30 @@ onMounted(async () => {
           <p class="text-3" :class="{ 'text-orange-500': row.triggerTime }" v-if="row.title">【{{ row.title }}】</p>
           <p class="fw-bold" :class="{ 'text-orange-500': row.triggerTime }">{{ row.name }}</p>
         </template>
-        <template #aliases="{ row, value }">
-          <span :class="{ 'text-orange-500': row.triggerTime }">{{ value.join('、') }}</span>
+        <template #aliases="{ value }">
+          <div class="f-center-center lh-1em gap-[3px]">
+            <span class="p-1 bg-gray-200 rounded ws-nowrap" v-for="item in value" :key="item">
+              {{ item }}
+            </span>
+          </div>
         </template>
         <template #triggerCondition="{ row, value }">
           <p class="f-center">
             击杀【{{ row.level + 5 }}级 {{ value.monster }}<i v-if="value.night" v-title="'夜晚'" class="icon icon-s i-lucide:moon"></i>】
           </p>
-          <p v-if="value.weather" class="f-center">
-            在【<i class="icon icon-s" :class="`icon-eureka-${value.weather.weather}`"></i>{{ value.weather.name }}】出现
+          <p v-if="row.triggerWeather" class="f-center">
+            在【<img class="icon icon-s" :src="getIcon(row.triggerWeather.icon)" />{{ row.triggerWeather.name }}】出现
           </p>
         </template>
         <template #normalRewards="{ value }">
           <p v-for="(item, index) in value" :key="index" class="f-center">
             <!-- <img class="mr-1 icon icon-s" :src="getIcon(item.icon)" />{{ item.name }} * {{ item.quantity }} -->
-            <img class="mr-1 icon icon-s" :src="getIcon(item.icon)" v-title:left="item.name" /> * {{ item.quantity }}
+            <stone-image class="mr-1 icon icon-s" :src="getIcon(item.icon)" v-title:left="item.name" /> * {{ item.quantity }}
           </p>
         </template>
         <template #specialRewards="{ value }">
           <p v-for="(item, index) in value" :key="index" class="f-center">
-            <img class="mr-1 icon icon-s" :src="getIcon(item.icon)" />{{ item.name }}
+            <stone-image class="mr-1 icon icon-s" :src="getIcon(item.icon)" />{{ item.name }}
           </p>
         </template>
         <template #triggerTime="{ row, value }">
@@ -233,10 +240,10 @@ onMounted(async () => {
           <i v-if="value" class="ml-2 icon icon-s i-lucide:copy cursor-pointer" @click="copyFate(row)"></i>
           <br />
           <div v-if="value" class="f-center-center mt-1 bg-orange-100 px-2 rounded-lg text-3 fw-500 text-gray-500">
-            <span>触发于 </span>
-            <stone-time type="minute" v-model="triggerMap[areaId][row.name]"></stone-time>
+            <span>触发于</span>
+            <stone-time type="minute" v-model="triggerMap[areaId][row.name]" class="trigger-time"></stone-time>
           </div>
-          <p v-else class="if-center-center text-3 mt-1 px-2 text-gray-500">待触发</p>
+          <div v-else class="f-center-center text-3 mt-1 px-2 text-gray-500">待触发</div>
         </template>
       </stone-table>
     </div>

@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import type { EurekaAreaId, ForecastItem } from '@renderer/types/eureka.type'
-import { eurekaAreaVariants, eurekaAreaWeatherRates } from '@renderer/data/eureka.data'
+import { eurekaAreaVariants, eurekaAreaWeatherRates, eurekaIcons } from '@renderer/data/eureka.data'
 import { EorzeaWeather } from '@renderer/utils/weather.util'
 import { useClockStore } from '@renderer/stores'
+import { Eureka } from '@renderer/utils/eureka.util'
+import { getIcon } from '@renderer/api/request'
 
 const clockStore = useClockStore()
 
@@ -18,10 +20,12 @@ const tableData = computed(() => {
   const areaWeather = eurekaAreaWeatherRates[areaId.value]
   const filterName = variantName.value.trim()
   const variantList = eurekaAreaVariants[areaId.value]
-  const weatherCols = areaWeather.map((weather) => {
+  const weatherCols = areaWeather.map((item) => {
+    const weatherInfo = Eureka.getWeatherInfo(item.weather)
     return {
-      key: weather.weather,
-      title: weather.name,
+      key: item.weather,
+      title: weatherInfo.name,
+      icon: weatherInfo.icon,
     }
   })
   return {
@@ -72,13 +76,13 @@ onMounted(() => {
       </select>
       <input type="text" v-model="variantName" class="ml-1em normal-input" placeholder="请输入名称筛选" />
       <div class="ml-1em gap-2 if-start-start">
-        <i
+        <img
           v-for="(item, index) in forecastWeather"
           :key="index"
+          :src="getIcon(item.icon)"
           v-title:bottom.interactive="getWeatherTitle(item, index)"
           class="cursor-pointer icon icon-l rounded-full"
-          :class="[`icon-eureka-${item.weather}`, index === 0 ? 'b-2 b-solid b-orange-500' : '']">
-        </i>
+          :class="[index === 0 ? 'b-2 b-solid b-orange-500' : '']" />
       </div>
     </div>
     <div class="w-full h-[calc(100%-3em)]">
@@ -87,11 +91,13 @@ onMounted(() => {
           <span v-if="column.key === 'name' || column.key === 'level' || column.key === 'element'">
             {{ column.title }}
           </span>
-          <i
-            class="icon rounded-full"
-            :class="[`icon-eureka-${column.key}`, currentWeather === column.key ? 'b-2 b-solid b-orange-500' : '']"
-            v-title="column.title"
-            v-else></i>
+          <div class="f-center-center" v-else>
+            <img
+              class="icon-l rounded-full"
+              :src="getIcon(column.icon)"
+              :class="currentWeather === column.key ? 'b-2 b-solid b-orange-500' : ''"
+              v-title="column.title" />
+          </div>
         </template>
         <template #default="{ row, column, value }">
           <span v-if="column.key === 'level'">
@@ -104,16 +110,18 @@ onMounted(() => {
           </i>
         </template>
         <template #name="{ row, value }">
-          <i class="icon icon-m" :class="`icon-eureka-${row.type}`"></i>
-          <span class="inline-block w-10em text-left">{{ value }}</span>
+          <div class="f-center-center">
+            <img class="icon icon-l" :src="getIcon(eurekaIcons[row.type])" />
+            <span class="inline-block w-10em text-left">{{ value }}</span>
+          </div>
         </template>
         <template #element="{ value }">
-          <div class="transfer" v-if="value.length === 2">
-            <i class="icon icon-l" :class="`icon-element-${value[0]}`"></i>
+          <div class="f-center-center" v-if="value.length === 2">
+            <img class="icon-l" :src="getIcon(eurekaIcons[value[0]])" />
             <i class="icon icon-m i-lucide:arrow-right"></i>
-            <i class="icon icon-l" :class="`icon-element-${value[1]}`"></i>
+            <img class="icon-l" :src="getIcon(eurekaIcons[value[1]])" />
           </div>
-          <i class="icon icon-l" :class="`icon-element-${value[0]}`" v-else></i>
+          <img class="icon icon-l" :src="getIcon(eurekaIcons[value[0]])" v-else />
         </template>
       </stone-table>
     </div>

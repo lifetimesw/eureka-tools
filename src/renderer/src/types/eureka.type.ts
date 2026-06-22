@@ -17,12 +17,14 @@ export type Weather =
   | 'thunderstorms'
   | 'unknown'
 
-/* 天气概率 */
+/* 天气 */
+export interface WeatherInfo {
+  name: string
+  icon: string
+}
 export interface WeatherRate {
   rate: number // 概率
-  name: string // 天气名称
-  weather: Weather // 天气名称
-  color: string // 天气颜色
+  weather: Weather // 天气
 }
 
 /* 区域Fate */
@@ -34,7 +36,7 @@ export interface Fate {
   triggerCondition: {
     monster: string
     night: boolean
-    weather: { name: string; weather: Weather } | null
+    weather: Weather | null
   }
   description: string
   triggerTime?: string
@@ -58,6 +60,7 @@ export interface ForecastItem {
   localTimeStr: string
   localDateStr: string
   weather: Weather
+  icon: string
   startTimestamp: number
   endTimestamp: number
 }
