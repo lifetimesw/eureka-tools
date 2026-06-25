@@ -41,7 +41,7 @@ export class EorzeaWeather {
       }
       remainingSeed -= rateInfo.rate
     }
-    return { rate: 0, name: '未知', weather: 'unknown', color: '#999' }
+    return { rate: 0, weather: 'unknown' }
   }
 
   /**
@@ -57,7 +57,8 @@ export class EorzeaWeather {
 
     const seed = this.calcSingleSeed(clock)
 
-    const weatherInfo = this.getWeatherBySeed(areaWeather, seed)
+    const weatherRate = this.getWeatherBySeed(areaWeather, seed)
+    const weatherInfo = Eureka.getWeatherInfo(weatherRate.weather)
 
     const endTimeClock = baseClock.addHours(8)
     const localTime = baseClock.getLocalTime()
@@ -67,7 +68,8 @@ export class EorzeaWeather {
     return {
       time: baseClock.toHourMinuteString(),
       name: weatherInfo.name,
-      weather: weatherInfo.weather,
+      weather: weatherRate.weather,
+      icon: weatherInfo.icon,
       period: 0,
       localTime: baseClock.getLocalTime(),
       localTimeStr: localTimeStr,

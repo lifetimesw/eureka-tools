@@ -1,9 +1,18 @@
-import type { EurekaAreaId, Variant, WeatherRate } from '@renderer/types/eureka.type'
-import { eurekaAreaNames, eurekaAreaVariants, eurekaAreaWeatherRates } from '@renderer/data/eureka.data'
+import type { EurekaAreaId, Variant, Weather, WeatherInfo, WeatherRate } from '@renderer/types/eureka.type'
+import { eurekaAreaNames, eurekaAreaVariants, eurekaAreaWeatherRates, eurekaWeatherMap } from '@renderer/data/eureka.data'
 
 export class Eureka {
-  static getAreaWeather(areaId: EurekaAreaId): WeatherRate[] {
-    return eurekaAreaWeatherRates[areaId]
+  static getWeatherInfo(weather: Weather): WeatherInfo {
+    return eurekaWeatherMap[weather]
+  }
+  static getAreaWeather(areaId: EurekaAreaId): (WeatherInfo & WeatherRate)[] {
+    return eurekaAreaWeatherRates[areaId].map((item) => {
+      const weatherInfo = Eureka.getWeatherInfo(item.weather)
+      return {
+        ...item,
+        ...weatherInfo,
+      }
+    })
   }
 
   static getAreaName(areaId: EurekaAreaId): string {

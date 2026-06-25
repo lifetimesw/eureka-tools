@@ -141,16 +141,28 @@ async function handleUpdateMarketable(): Promise<void> {
     StoneMessage.success('市场数据已更新')
   } catch (error) {
     console.error('更新市场数据失败:', error)
-    // ElMessage.error('更新失败')
+    StoneMessage.error('更新市场数据失败！')
   } finally {
     isUpdating.value = false
   }
 }
 
 /* 获取服务器信息 */
-const regionKey = ref('中国')
-const dataCenterKey = ref('莫古力')
-const worldKey = ref<string | number>('')
+const languageList = [
+  { name: '简体中文', value: 'chs' },
+  { name: '日本語', value: 'ja' },
+  { name: 'English', value: 'en' },
+  { name: 'Deutsch', value: 'de' },
+  { name: 'Français', value: 'fr' },
+  { name: '繁體中文', value: 'tc' },
+  { name: '한국어', value: 'ko' },
+]
+const marketOptions = reactive({
+  language: 'chs',
+  region: '中国',
+  dataCenter: '莫古力',
+  world: '',
+})
 const worldMap = ref<Record<string, World>>({})
 const regionMap = ref<Record<string, DataCenter[]>>({})
 const dataCenterMap = ref<Record<string, DataCenter>>({})
@@ -192,21 +204,21 @@ const regionListComputed = computed(() => {
   return Object.keys(regionMap.value)
 })
 const dataCenterListComputed = computed(() => {
-  const all = { name: regionKey.value, region: regionKey.value, worlds: [] }
-  if (Object.hasOwn(regionMap.value, regionKey.value)) {
-    const result = Array.from(regionMap.value[regionKey.value])
+  const all = { name: marketOptions.region, region: marketOptions.region, worlds: [] }
+  if (Object.hasOwn(regionMap.value, marketOptions.region)) {
+    const result = Array.from(regionMap.value[marketOptions.region])
     result.unshift(all)
     return result
   }
   return [all]
 })
 const worldListComputed = computed(() => {
-  if (Object.hasOwn(dataCenterMap.value, dataCenterKey.value)) {
-    const result = Array.from(dataCenterMap.value[dataCenterKey.value].worlds)
-    result.unshift(dataCenterKey.value)
+  if (Object.hasOwn(dataCenterMap.value, marketOptions.dataCenter)) {
+    const result = Array.from(dataCenterMap.value[marketOptions.dataCenter].worlds)
+    result.unshift(marketOptions.dataCenter)
     return result
   }
-  return [dataCenterKey.value]
+  return [marketOptions.dataCenter]
 })
 
 function processServerData(worlds: World[], dataCenters: DataCenter[]): void {
@@ -228,27 +240,26 @@ function processServerData(worlds: World[], dataCenters: DataCenter[]): void {
     }
   })
 
-  if (!Object.hasOwn(cRegionMap, regionKey.value)) {
+  // 初始化选择
+  if (!Object.hasOwn(cRegionMap, marketOptions.region)) {
     const keys = Object.keys(cRegionMap)
     if (keys.length > 0) {
-      regionKey.value = keys[0]
+      marketOptions.region = keys[0]
     }
   }
 
-  // 初始化选择
-  if (regionKey.value && Object.hasOwn(cRegionMap, regionKey.value)) {
-    if (Object.hasOwn(cDataCenterMap, dataCenterKey.value)) {
-      worldKey.value = dataCenterKey.value
+  if (marketOptions.region && Object.hasOwn(cRegionMap, marketOptions.region)) {
+    if (Object.hasOwn(cDataCenterMap, marketOptions.dataCenter)) {
+      marketOptions.world = marketOptions.dataCenter
     } else {
-      dataCenterKey.value = regionKey.value
-      worldKey.value = regionKey.value
+      marketOptions.dataCenter = marketOptions.region
+      marketOptions.world = marketOptions.region
     }
   } else if (Object.keys(cDataCenterMap).length > 0) {
-    //  fallback
     const firstDc = Object.values(cDataCenterMap)[0]
-    regionKey.value = firstDc.region
-    dataCenterKey.value = firstDc.name
-    worldKey.value = firstDc.name
+    marketOptions.region = firstDc.region
+    marketOptions.dataCenter = firstDc.name
+    marketOptions.world = firstDc.name
   }
 
   regionMap.value = cRegionMap
@@ -257,6 +268,12 @@ function processServerData(worlds: World[], dataCenters: DataCenter[]): void {
 async function loadWorldsAndDataCenters(): Promise<void> {
   try {
     // 尝试从本地加载
+    const defaultOptions = (await window.api.store.get('marketOptions')).data
+    marketOptions.language = defaultOptions?.language || 'chs'
+    marketOptions.region = defaultOptions?.region || '中国'
+    marketOptions.dataCenter = defaultOptions?.dataCenter || '莫古力'
+    marketOptions.world = defaultOptions?.world || '莫古力'
+
     const serverData = await getServerData()
     if (serverData && serverData.worlds.length && serverData.dataCenters.length) {
       processServerData(serverData.worlds, serverData.dataCenters)
@@ -270,12 +287,12 @@ async function loadWorldsAndDataCenters(): Promise<void> {
   }
 }
 function handleRegionChange(): void {
-  dataCenterKey.value = regionKey.value
-  worldKey.value = regionKey.value
+  marketOptions.dataCenter = marketOptions.region
+  marketOptions.world = marketOptions.region
   loadPriceInfo()
 }
 function handleDataCenterChange(): void {
-  worldKey.value = dataCenterKey.value
+  marketOptions.world = marketOptions.dataCenter
   loadPriceInfo()
 }
 
@@ -293,7 +310,7 @@ function loadPriceInfo(): void {
       // hq: true,
       noGst: true,
     }
-    const url = `${constants.url.universalis}/api/${worldKey.value}/${itemInfo.value.id}`
+    const url = `${constants.url.universalis}/api/${marketOptions.world}/${itemInfo.value.id}`
     priceRequestKey.value = `get:${url}:${JSON.stringify(reqData)}`
     axiosRequest.get(url, reqData, { requestKey: priceRequestKey.value }).then((response: unknown) => {
       if (response as PriceResult) {
@@ -320,12 +337,13 @@ function loadBlurItem(): void {
   if (itemName.value.trim() === '') {
     return
   }
-  const enNameKey = 'Name@lang(en)'
   const reqData = {
     query: `Name~"${itemName.value}"`,
     sheets: 'Item',
-    fields: `Name,${enNameKey},Icon`,
+    language: marketOptions.language,
+    fields: `Name,Icon`,
   }
+  console.log(reqData)
   itemList.value = []
   axiosRequest.get(`${constants.url.cafemaker}/api/search`, reqData).then((response: unknown) => {
     if (response) {
@@ -335,7 +353,6 @@ function loadBlurItem(): void {
           return {
             id: item.row_id,
             name: item.fields.Name,
-            enName: item.fields[enNameKey],
             icon: getIcon(item.fields.Icon.id),
             score: item.score,
             sheet: item.sheet,
@@ -388,6 +405,9 @@ watch(historyItems, (newHistoryItems) => {
 watch(pinItems, (newPinItems) => {
   setPinData(toRaw(newPinItems))
 })
+watch(marketOptions, (newOptions) => {
+  window.api.store.set('marketOptions', toRaw(newOptions))
+})
 
 onMounted(() => {
   loadMarketableList()
@@ -401,6 +421,9 @@ onMounted(() => {
     <div class="h-full px-1em w-22em b-r-solid b-r-blueGray b-r-1">
       <div class="h-3em w-full gap-1 f-center-start">
         <input v-model="itemName" type="text" class="flex-1 normal-input" @keyup.enter="loadBlurItem" />
+        <select class="flex-shrink-0 normal-select" v-model="marketOptions.language" @change="loadBlurItem">
+          <option v-for="item in languageList" :key="item.value" :value="item.value">{{ item.name }}</option>
+        </select>
         <button class="flex-shrink-0 normal-button" @click="loadBlurItem">查询</button>
         <button v-title="'更新可交易物品列表'" class="flex-shrink-0 normal-button" :disabled="isUpdating" @click="handleUpdateMarketable">
           {{ isUpdating ? '更新中...' : '更新' }}
@@ -413,7 +436,7 @@ onMounted(() => {
           class="cursor-pointer h-2em w-full f-center-start hover:text-blue"
           :class="{ active: item.id === itemInfo.id }"
           @click="loadItemInfo(item)">
-          <img class="mr-1 icon" :src="item.icon" />
+          <stone-image class="mr-1 icon" :src="item.icon" />
           <span>{{ item.name }}</span>
         </div>
       </div>
@@ -426,14 +449,14 @@ onMounted(() => {
         <div class="h-[calc(100%-2em)] w-full overflow-y-auto">
           <div class="h-2em w-full group f-center-start" :class="{ active: item.id === itemInfo.id }" v-for="item in pinItems" :key="item.id">
             <div class="cursor-pointer f-center" :class="{ active: item.id === itemInfo.id }" @click="loadItemInfo(item)">
-              <img class="mr-1 icon" :src="item.icon" />
+              <stone-image class="mr-1 icon" :src="item.icon" />
               <span>{{ item.name }}</span>
             </div>
             <i class="cursor-pointer ml-auto icon-m i-lucide:pin hover:i-lucide:pin-off" @click="handlePinOff(item)"></i>
           </div>
           <div class="h-2em w-full group f-center-start" v-for="item in historyItems" :key="item.id">
             <div class="cursor-pointer f-center hover:text-blue" :class="{ active: item.id === itemInfo.id }" @click="loadItemInfo(item)">
-              <img class="mr-1 icon" :src="item.icon" />
+              <stone-image class="mr-1 icon" :src="item.icon" />
               <span>{{ item.name }}</span>
             </div>
             <i class="cursor-pointer ml-auto icon-m i-lucide:pin hidden group-hover:inline-block" @click="handlePin(item)"></i>
@@ -443,7 +466,7 @@ onMounted(() => {
     </div>
     <div class="h-full flex-1 px-1em">
       <div class="h-4em w-full f-center-start">
-        <img v-show="itemInfo.icon" class="h-3em mr-1 w-3em inline-block" :src="itemInfo.icon" alt="" />
+        <stone-image v-show="itemInfo.icon" class="h-3em mr-1 w-3em inline-block rounded-md" :src="itemInfo.icon" alt="" />
         <div class="flex-1 f-start-center-col">
           <div class="f-center-center">
             <span class="font-bold text-lg">{{ itemInfo.name || '--' }}</span>
@@ -455,17 +478,17 @@ onMounted(() => {
       </div>
       <div class="h-[calc(100%-4em)] w-full">
         <div class="h-3em gap-1 f-center">
-          <select v-model="regionKey" class="normal-select" @change="handleRegionChange">
+          <select v-model="marketOptions.region" class="normal-select" @change="handleRegionChange">
             <option v-for="item in regionListComputed" :key="item" :value="item">
               {{ item }}
             </option>
           </select>
-          <select v-model="dataCenterKey" class="normal-select" @change="handleDataCenterChange">
+          <select v-model="marketOptions.dataCenter" class="normal-select" @change="handleDataCenterChange">
             <option v-for="item in dataCenterListComputed" :key="item.name" :value="item.name">
               {{ item.name }}
             </option>
           </select>
-          <select v-model="worldKey" class="normal-select" @change="loadPriceInfo">
+          <select v-model="marketOptions.world" class="normal-select" @change="loadPriceInfo">
             <option v-for="item in worldListComputed" :key="item" :value="item">
               {{ typeof item === 'number' ? worldMap[item].name : item }}
             </option>
@@ -476,7 +499,7 @@ onMounted(() => {
         <div class="h-[calc(100%-3em)] w-full">
           <stone-table :table-data="tableData" class="cold" fix-head show-total-size>
             <template #hq="{ value }">
-              <img v-if="value" class="align-middle" src="@renderer/assets/images/icons/hq.png" alt="" />
+              <img v-if="value" class="icon-m align-middle" src="@renderer/assets/images/icons/hq.png" />
             </template>
           </stone-table>
         </div>

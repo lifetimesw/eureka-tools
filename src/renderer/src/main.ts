@@ -1,6 +1,7 @@
 import Table from '@renderer/components/base/table.vue'
 import Type from '@renderer/components/base/type.vue'
 import Time from '@renderer/components/base/time.vue'
+import Image from '@renderer/components/base/image.vue'
 import directives from '@renderer/directives'
 import router from '@renderer/router'
 import store from '@renderer/stores'
@@ -23,6 +24,7 @@ app.use(directives)
 app.component('StoneTable', Table as Component)
 app.component('StoneType', Type as Component)
 app.component('StoneTime', Time as Component)
+app.component('StoneImage', Image as Component)
 app.use(store)
 app.use(router)
 app.mount('#app').$nextTick(() => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const techStack = ['XIVAPI', 'Garland Tools', 'Universalis', 'Classjob-Icons', 'Electron-Vite 5', 'Vue 3.5', 'Unocss']
+const techStack = ['XIVAPI-V2', 'XIVAPI', 'Garland Tools', 'Universalis', 'Classjob-Icons', 'Electron-Vite 5', 'Vue 3.5', 'Unocss']
 const version = ref('')
 const appName = ref('')
 

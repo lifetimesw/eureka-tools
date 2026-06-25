@@ -12,37 +12,7 @@ $icon-sizes: (
 ) !default;
 
 $icons: (
-  ff14: 'ff14.png',
-  eureka: 'eureka.png',
-  hq: 'hq.png',
-
-  eureka-blizzards: 'eureka-blizzards.png',
-  eureka-fairSkies: 'eureka-fairSkies.png',
-  eureka-fog: 'eureka-fog.png',
-  eureka-gales: 'eureka-gales.png',
-  eureka-gloom: 'eureka-gloom.png',
-  eureka-heatWaves: 'eureka-heatWaves.png',
-  eureka-showers: 'eureka-showers.png',
-  eureka-snow: 'eureka-snow.png',
-  eureka-thunder: 'eureka-thunder.png',
-  eureka-thunderstorms: 'eureka-thunderstorms.png',
-  eureka-umbralWind: 'eureka-umbralWind.png',
-
-  eureka-adaptation: 'adaptation.png',
-  eureka-mutation: 'mutation.png',
-
-  element-fire: 'fire.png',
-  element-water: 'water.png',
-  element-wind: 'wind.png',
-  element-lightning: 'lightning.png',
-  element-earth: 'earth.png',
-  element-ice: 'ice.png',
-  element-fire-hexagon: 'fire-hexagon.png',
-  element-water-hexagon: 'water-hexagon.png',
-  element-wind-hexagon: 'wind-hexagon.png',
-  element-lightning-hexagon: 'lightning-hexagon.png',
-  element-earth-hexagon: 'earth-hexagon.png',
-  element-ice-hexagon: 'ice-hexagon.png',
+  // hq: 'hq.png',
 );
 
 @mixin icon-base {

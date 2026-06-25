@@ -132,8 +132,8 @@ $inputBorderColor: rgba(43, 101, 240, 0.5); //input 边框颜色
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.875em;
     color: $inputColor;
+    font-size: 0.875em;
 
     .icon-date {
       @include flex();
@@ -150,13 +150,33 @@ $inputBorderColor: rgba(43, 101, 240, 0.5); //input 边框颜色
       height: 2em;
       padding: 0 0.5em;
       font-weight: bold;
-      line-height: 2em;
+      line-height: 2;
       text-align: center;
       cursor: pointer;
       user-select: none;
       background-color: $inputBgColor;
       border: 1px solid $inputBorderColor;
       border-radius: 0 0.4em 0.4em 0;
+    }
+  }
+  &.trigger-time {
+    .yds-picker {
+      font-size: inherit;
+    }
+    .icon-date {
+      width: 1.5em;
+      height: 1.5em;
+      border: none;
+      color: #f97316;
+      background: inherit;
+    }
+    .picker-date {
+      border: none;
+      padding: 0;
+      height: 1.5em;
+      line-height: 1.5em;
+      color: #f97316;
+      background: inherit;
     }
   }
 }
@@ -435,6 +455,10 @@ $inputBorderColor: rgba(43, 101, 240, 0.5); //input 边框颜色
 
             &:hover {
               background: #0064d9;
+              color: #f8f8f8;
+            }
+            &.today {
+              background: #0064d960;
               color: #f8f8f8;
             }
 
