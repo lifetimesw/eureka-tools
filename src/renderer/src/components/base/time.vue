@@ -270,12 +270,12 @@ onBeforeUnmount(() => {
         </div>
         <div ref="dateTimeTimeRef" class="datetime-time">
           <div ref="hourRef" class="hour-group">
-            <div v-for="index in 24" :key="index" class="hour" :class="{ active: dateSelect.hour === index }" @click="selectHour(index)">
+            <div v-for="(item, index) in 24" :key="item" class="hour" :class="{ active: dateSelect.hour === index }" @click="selectHour(index)">
               <span>{{ String(index).padStart(2, '0') }}</span>
             </div>
           </div>
           <div ref="minuteRef" class="minute-group">
-            <div v-for="index in 60" :key="index" class="minute" :class="{ active: dateSelect.minute === index }" @click="selectMinute(index)">
+            <div v-for="(item, index) in 60" :key="item" class="minute" :class="{ active: dateSelect.minute === index }" @click="selectMinute(index)">
               <span>{{ String(index).padStart(2, '0') }}</span>
             </div>
           </div>
