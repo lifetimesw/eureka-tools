@@ -69,7 +69,14 @@ const triggeredHistory = computed(() => {
 const notTriggeredHistory = computed(() => {
   const history = tableData.value.dataArr.filter((item) => !item.triggerTime)
   if (history.length) {
-    return history.map((item) => item.aliases[0] ?? item.name).join('—')
+    return history
+      .map((item) => {
+        const name = item.aliases[0] ?? item.name
+        const weather = item.triggerCondition.weather
+        const weatherName = weather ? `(${Eureka.getWeatherInfo(weather).name})` : ''
+        return name + weatherName
+      })
+      .join('—')
   }
   return '无'
 })
@@ -181,13 +188,13 @@ onMounted(async () => {
         <img
           v-for="(item, index) in forecastWeather"
           :key="index"
-          :src="getIcon(item.icon)"
           v-title:bottom.interactive="getWeatherTitle(item, index)"
+          :src="getIcon(item.icon)"
           class="cursor-pointer icon icon-l rounded-full"
           :class="[index === 0 ? 'b-2 b-solid b-orange-500' : '']" />
       </div>
-      <button class="normal-button" @click="copyHistory(true)" v-title:bottom="triggeredHistory">复制已触发</button>
-      <button class="normal-button" @click="copyHistory(false)" v-title:bottom="notTriggeredHistory">复制未触发</button>
+      <button v-title:bottom="triggeredHistory" class="normal-button" @click="copyHistory(true)">复制已触发</button>
+      <button v-title:bottom="notTriggeredHistory" class="normal-button" @click="copyHistory(false)">复制未触发</button>
     </div>
     <div class="w-full h-[calc(100%-3em)]">
       <stone-table :table-data="tableData" class="cold" :fixed="[2, 0]" fix-head>
@@ -201,12 +208,12 @@ onMounted(async () => {
           <span :class="{ 'text-orange-500': row.triggerTime }">{{ value }}</span>
         </template>
         <template #name="{ row }">
-          <p class="text-3" :class="{ 'text-orange-500': row.triggerTime }" v-if="row.title">【{{ row.title }}】</p>
+          <p v-if="row.title" class="text-3" :class="{ 'text-orange-500': row.triggerTime }">【{{ row.title }}】</p>
           <p class="fw-bold" :class="{ 'text-orange-500': row.triggerTime }">{{ row.name }}</p>
         </template>
         <template #aliases="{ value }">
           <div class="f-center-center lh-1em gap-[3px]">
-            <span class="p-1 bg-gray-200 rounded ws-nowrap" v-for="item in value" :key="item">
+            <span v-for="item in value" :key="item" class="p-1 bg-gray-200 rounded ws-nowrap">
               {{ item }}
             </span>
           </div>
@@ -222,7 +229,7 @@ onMounted(async () => {
         <template #normalRewards="{ value }">
           <p v-for="(item, index) in value" :key="index" class="f-center">
             <!-- <img class="mr-1 icon icon-s" :src="getIcon(item.icon)" />{{ item.name }} * {{ item.quantity }} -->
-            <stone-image class="mr-1 icon icon-s" :src="getIcon(item.icon)" v-title:left="item.name" /> * {{ item.quantity }}
+            <stone-image v-title:left="item.name" class="mr-1 icon icon-s" :src="getIcon(item.icon)" /> * {{ item.quantity }}
           </p>
         </template>
         <template #specialRewards="{ value }">
@@ -241,7 +248,7 @@ onMounted(async () => {
           <br />
           <div v-if="value" class="f-center-center mt-1 bg-orange-100 px-2 rounded-lg text-3 fw-500 text-gray-500">
             <span>触发于</span>
-            <stone-time type="minute" v-model="triggerMap[areaId][row.name]" class="trigger-time"></stone-time>
+            <stone-time v-model="triggerMap[areaId][row.name]" type="minute" class="trigger-time"></stone-time>
           </div>
           <div v-else class="f-center-center text-3 mt-1 px-2 text-gray-500">待触发</div>
         </template>
