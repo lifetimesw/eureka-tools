@@ -128,7 +128,7 @@ $inputBorderColor: rgba(43, 101, 240, 0.5); //input 边框颜色
   display: inline-block;
   vertical-align: middle;
 
-  .yds-picker {
+  .stone-time-picker {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -158,9 +158,12 @@ $inputBorderColor: rgba(43, 101, 240, 0.5); //input 边框颜色
       border: 1px solid $inputBorderColor;
       border-radius: 0 0.4em 0.4em 0;
     }
+    &.minute-picker .picker-date {
+      width: 10em;
+    }
   }
   &.trigger-time {
-    .yds-picker {
+    .stone-time-picker {
       font-size: inherit;
     }
     .icon-date {
@@ -321,19 +324,22 @@ $inputBorderColor: rgba(43, 101, 240, 0.5); //input 边框颜色
         text-align: center;
         border: 0;
 
-        span {
+        .day {
           display: inline-block;
-          width: 98%;
-          height: 85%;
-          font-size: 0.9rem;
-          font-weight: bold;
-          cursor: pointer;
-          color: #000e38;
+          width: 96%;
+          color: #9398a8;
           cursor: pointer;
           border-radius: 0.4em;
+          &.current-month {
+            color: #000e38;
+          }
 
           &:hover {
             background: #0064d9;
+            color: #f8f8f8;
+          }
+          &.today {
+            background: #0064d960;
             color: #f8f8f8;
           }
 
@@ -446,12 +452,15 @@ $inputBorderColor: rgba(43, 101, 240, 0.5); //input 边框颜色
           font-weight: bold;
           line-height: 2em;
 
-          .current-month {
+          .day {
             display: inline-block;
             width: 96%;
-            color: #000e38;
+            color: #9398a8;
             cursor: pointer;
             border-radius: 0.4em;
+            &.current-month {
+              color: #000e38;
+            }
 
             &:hover {
               background: #0064d9;

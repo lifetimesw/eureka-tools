@@ -91,38 +91,21 @@ export function createCalendar(year: number, month: number): Day[][] {
   }
 
   // 下一个月
-  // if (week <= 6 || weeksOfMonth < 5) {
-  //   const nextMonth = month === 12 ? 1 : month + 1
-  //   const nextYear = nextMonth === 1 ? year + 1 : year
-  //   const nextDays = getDaysOfMonth(nextYear, nextMonth)
-
-  //   for (let day = 1; day <= nextDays; day++, week++) {
-  //     if (week > 6) {
-  //       week = 0
-  //       weeksOfMonth++
-  //       if (weeksOfMonth > 5) {
-  //         break
-  //       }
-  //       calendar[weeksOfMonth] = []
-  //     }
-  //     const date = new Date(nextYear, nextMonth - 1, day).format('YYYY-MM-DD')
-  //     const weekOfYear = getWeekByDays(daysOfYearOfPreMonth + weekOfFirstDayOfYear + daysOfMonth + day)
-  //     calendar[weeksOfMonth][week] = {
-  //       year: nextYear,
-  //       month: nextMonth,
-  //       day,
-  //       week,
-  //       date,
-  //       weekOfYear,
-  //       isCurrentMonth: false,
-  //     }
-  //   }
-  // }
-  if (week <= 6) {
+  if (week <= 6 || weeksOfMonth < 5) {
     const nextMonth = month === 12 ? 1 : month + 1
     const nextYear = nextMonth === 1 ? year + 1 : year
-    for (let day = 1; week <= 6; day++, week++) {
-      const date = dayjs().format('YYYY-MM-DD')
+    const nextDays = getDaysOfMonth(nextYear, nextMonth)
+
+    for (let day = 1; day <= nextDays; day++, week++) {
+      if (week > 6) {
+        week = 0
+        weeksOfMonth++
+        if (weeksOfMonth > 5) {
+          break
+        }
+        calendar[weeksOfMonth] = []
+      }
+      const date = dayjs(new Date(nextYear, nextMonth - 1, day)).format('YYYY-MM-DD')
       const weekOfYear = getWeekByDays(daysOfYearOfPreMonth + weekOfFirstDayOfYear + daysOfMonth + day)
       calendar[weeksOfMonth][week] = {
         year: nextYear,
@@ -135,5 +118,22 @@ export function createCalendar(year: number, month: number): Day[][] {
       }
     }
   }
+  // if (week <= 6) {
+  //   const nextMonth = month === 12 ? 1 : month + 1
+  //   const nextYear = nextMonth === 1 ? year + 1 : year
+  //   for (let day = 1; week <= 6; day++, week++) {
+  //     const date = dayjs().format('YYYY-MM-DD')
+  //     const weekOfYear = getWeekByDays(daysOfYearOfPreMonth + weekOfFirstDayOfYear + daysOfMonth + day)
+  //     calendar[weeksOfMonth][week] = {
+  //       year: nextYear,
+  //       month: nextMonth,
+  //       day,
+  //       week,
+  //       date,
+  //       weekOfYear,
+  //       isCurrentMonth: false,
+  //     }
+  //   }
+  // }
   return calendar
 }

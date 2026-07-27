@@ -35,37 +35,35 @@ interface SearchResult {
   score: number
   sheet: string
 }
-interface TableRow {
+
+interface PriceItem {
+  lastReviewTime: number
   hq: boolean
+  onMannequin: boolean
+  worldID: number
   worldName: string
-  pricePerUnit: string
+  retainerID: string
+  retainerName: string
+  pricePerUnit: number
   quantity: number
-  total: string
-  retainerName?: string
-  buyerName?: string
-  buyTime?: string
+  total: number
 }
-interface PriceResult {
-  lastUploadTime: string
-  worldName?: string
-  listings: {
-    hq: boolean
-    worldName: string
-    pricePerUnit: number
-    quantity: number
-    total: number
-    retainerName: string
-  }[]
-  recentHistory: {
-    hq: boolean
-    worldName: string
-    pricePerUnit: number
-    quantity: number
-    total: number
-    buyerName: string
-    timestamp: number
-  }[]
+interface HistoryItem {
+  timestamp: number
+  hq: boolean
+  onMannequin: boolean
+  worldID: number
+  worldName: string
+  buyerName: string
+  pricePerUnit: number
+  quantity: number
+  total: number
 }
+interface MarketResponse {
+  listings?: PriceItem[]
+  recentHistory?: HistoryItem[]
+}
+type TableRow = PriceItem | HistoryItem
 
 const marketColumns = [
   { key: 'worldName', title: '区服' },
@@ -74,6 +72,7 @@ const marketColumns = [
   { key: 'quantity', title: '数量' },
   { key: 'total', title: '总计' },
   { key: 'retainerName', title: '雇员' },
+  { key: 'lastReviewTime', title: '最后一次上报' },
 ]
 const historyColumns = [
   { key: 'worldName', title: '区服' },
@@ -82,24 +81,25 @@ const historyColumns = [
   { key: 'quantity', title: '数量' },
   { key: 'total', title: '总计' },
   { key: 'buyerName', title: '买家' },
-  { key: 'buyTime', title: '时间' },
+  { key: 'timestamp', title: '时间' },
 ]
 
 const isUpdating = ref(false)
 const marketableList = ref<number[]>([])
-const lastUploadTime = ref('')
 
 const marketType = ref(1)
 const marketTypeList = [
   { type: 1, name: '当前' },
   { type: 2, name: '历史' },
 ]
-const itemName = ref('')
+const itemName = ref<string>('')
+const onlyHq = ref<boolean>(false)
 const itemList = ref<Item[]>([])
 const itemInfo = ref<Item>({})
 const historyItems = reactive<Item[]>([])
 const pinItems = reactive<Item[]>([])
-const priceResult = shallowRef<PriceResult | null>(null)
+const priceResult = shallowRef<PriceItem[]>([])
+const historyResult = shallowRef<HistoryItem[]>([])
 
 /* 读取缓存 */
 async function loadMarketableList(): Promise<void> {
@@ -172,26 +172,9 @@ const tableData = computed(() => {
   let columns = marketType.value === 1 ? marketColumns : historyColumns
   if (priceResult.value) {
     if (marketType.value === 1) {
-      dataArr = priceResult.value.listings.map((item) => ({
-        hq: item.hq,
-        worldName: priceResult.value?.worldName || item.worldName,
-        pricePerUnit: item.pricePerUnit.toLocaleString(),
-        quantity: item.quantity,
-        total: item.total.toLocaleString(),
-        retainerName: item.retainerName,
-      }))
+      dataArr = priceResult.value
     } else {
-      dataArr = priceResult.value.recentHistory.map((item) => {
-        return {
-          hq: item.hq,
-          worldName: priceResult.value?.worldName || item.worldName,
-          pricePerUnit: item.pricePerUnit.toLocaleString(),
-          quantity: item.quantity,
-          total: item.total.toLocaleString(),
-          buyerName: item.buyerName,
-          buyTime: dayjs(item.timestamp * 1000).fromNow(),
-        }
-      })
+      dataArr = historyResult.value
     }
   }
   return {
@@ -220,6 +203,10 @@ const worldListComputed = computed(() => {
   }
   return [marketOptions.dataCenter]
 })
+
+function toLocaleTime(timestamp: number): string {
+  return new Date(timestamp * 1000).toLocaleString()
+}
 
 function processServerData(worlds: World[], dataCenters: DataCenter[]): void {
   const cMap: Record<string, World> = {}
@@ -289,37 +276,60 @@ async function loadWorldsAndDataCenters(): Promise<void> {
 function handleRegionChange(): void {
   marketOptions.dataCenter = marketOptions.region
   marketOptions.world = marketOptions.region
-  loadPriceInfo()
+  loadMarketBoardInfo()
 }
 function handleDataCenterChange(): void {
   marketOptions.world = marketOptions.dataCenter
-  loadPriceInfo()
+  loadMarketBoardInfo()
 }
 
 /* 获取物品信息和价格 */
 const priceRequestKey = ref('')
-function loadPriceInfo(): void {
+const historyRequestKey = ref('')
+function loadMarketBoardPrice(): void {
   if (priceRequestKey.value) {
     axiosRequest.cancel(priceRequestKey.value)
   }
-  priceResult.value = null
-  lastUploadTime.value = ''
+  priceResult.value = []
   if (itemInfo.value.id) {
     const reqData = {
-      listings: '200',
-      // hq: true,
-      noGst: true,
+      fields: 'listings',
+      listings: 200,
+      ...(onlyHq.value && { hq: true }),
     }
-    const url = `${constants.url.universalis}/api/${marketOptions.world}/${itemInfo.value.id}`
+    const url = `${constants.url.universalis}/api/v2/${marketOptions.world}/${itemInfo.value.id}`
     priceRequestKey.value = `get:${url}:${JSON.stringify(reqData)}`
     axiosRequest.get(url, reqData, { requestKey: priceRequestKey.value }).then((response: unknown) => {
-      if (response as PriceResult) {
-        const result = response as PriceResult
-        lastUploadTime.value = new Date(result.lastUploadTime).toLocaleString()
-        priceResult.value = result
+      if (response) {
+        const result = response as MarketResponse
+        priceResult.value = result.listings ?? []
       }
     })
   }
+}
+function loadTransactionHistory(): void {
+  if (historyRequestKey.value) {
+    axiosRequest.cancel(historyRequestKey.value)
+  }
+  historyResult.value = []
+  if (itemInfo.value.id) {
+    const reqData = {
+      fields: 'recentHistory',
+      entries: 20,
+    }
+    const url = `${constants.url.universalis}/api/v2/${marketOptions.world}/${itemInfo.value.id}`
+    historyRequestKey.value = `get:${url}:${JSON.stringify(reqData)}`
+    axiosRequest.get(url, reqData, { requestKey: historyRequestKey.value }).then((response: unknown) => {
+      if (response) {
+        const result = response as MarketResponse
+        historyResult.value = result.recentHistory ?? []
+      }
+    })
+  }
+}
+function loadMarketBoardInfo(): void {
+  loadMarketBoardPrice()
+  loadTransactionHistory()
 }
 function loadItemInfo(item: Item): void {
   itemInfo.value = item
@@ -331,7 +341,7 @@ function loadItemInfo(item: Item): void {
     }
     historyItems.unshift(item)
   }
-  loadPriceInfo()
+  loadMarketBoardInfo()
 }
 function loadBlurItem(): void {
   if (itemName.value.trim() === '') {
@@ -343,7 +353,6 @@ function loadBlurItem(): void {
     language: marketOptions.language,
     fields: `Name,Icon`,
   }
-  console.log(reqData)
   itemList.value = []
   axiosRequest.get(`${constants.url.cafemaker}/api/search`, reqData).then((response: unknown) => {
     if (response) {
@@ -358,6 +367,7 @@ function loadBlurItem(): void {
             sheet: item.sheet,
           }
         })
+      console.log(response)
       itemList.value = dataArr
     }
   })
@@ -464,7 +474,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="h-full flex-1 px-1em">
+    <div class="h-full min-w-0 flex-1 px-1em">
       <div class="h-4em w-full f-center-start">
         <stone-image v-show="itemInfo.icon" class="h-3em mr-1 w-3em inline-block rounded-md" :src="itemInfo.icon" alt="" />
         <div class="flex-1 f-start-center-col">
@@ -473,7 +483,10 @@ onMounted(() => {
             <i class="cursor-pointer ml-xs i-lucide:copy hover:text-blue" @click="copy(itemInfo.name)" />
           </div>
           <!-- <span class="stack">EN：{{ itemInfo.enName || '--' }}</span> -->
-          <span class="cursor-pointer text-sm hover:text-blue" @click="goToWiki" v-show="itemInfo.name">在Wiki中查看</span>
+          <div class="f-center-center gap-1 hover:text-blue cursor-pointer">
+            <span class="text-sm" @click="goToWiki" v-show="itemInfo.name">在Wiki中查看</span>
+            <i class="icon-s i-lucide:square-arrow-out-up-right"></i>
+          </div>
         </div>
       </div>
       <div class="h-[calc(100%-4em)] w-full">
@@ -488,18 +501,27 @@ onMounted(() => {
               {{ item.name }}
             </option>
           </select>
-          <select v-model="marketOptions.world" class="normal-select" @change="loadPriceInfo">
+          <select v-model="marketOptions.world" class="normal-select" @change="loadMarketBoardInfo">
             <option v-for="item in worldListComputed" :key="item" :value="item">
               {{ typeof item === 'number' ? worldMap[item].name : item }}
             </option>
           </select>
+          <label class="normal-input if-center-center gap-1 cursor-pointer">
+            <input class="zoom-20" type="checkbox" v-model="onlyHq" @change="loadMarketBoardPrice" />
+            <span>仅HQ</span>
+          </label>
           <stone-type v-model="marketType" :list="marketTypeList"></stone-type>
-          <span class="ml-[0.5em] lh-1em" v-title="'最后上传时间'">{{ lastUploadTime }}</span>
         </div>
         <div class="h-[calc(100%-3em)] w-full">
           <stone-table :table-data="tableData" class="cold" fix-head show-total-size>
             <template #hq="{ value }">
-              <img v-if="value" class="icon-m align-middle" src="@renderer/assets/images/icons/hq.png" />
+              <img v-if="value" class="icon-s align-middle" src="@renderer/assets/images/icons/hq.png" />
+            </template>
+            <template #timestamp="{ value }">
+              <span>{{ toLocaleTime(value) }}</span>
+            </template>
+            <template #lastReviewTime="{ value }">
+              <span>{{ toLocaleTime(value) }}</span>
             </template>
           </stone-table>
         </div>

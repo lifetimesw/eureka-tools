@@ -6,11 +6,6 @@ import { EorzeaWeather } from '@renderer/utils/weather.util'
 import { useClockStore } from '@renderer/stores'
 import StoneMessage from '@renderer/components/base/message'
 
-export const FORECAST_STATUS = {
-  BEFORE: 0,
-  CURRENT: 1,
-  AFTER: 2,
-}
 export type ForecastType = 'start' | 'end' | 'middle' | 'single'
 export interface WeatherForecastProps {
   areaId: EurekaAreaId
@@ -20,6 +15,9 @@ export interface WeatherForecastProps {
 interface ProcessedForecastItem extends ForecastItem {
   show: boolean
   type: ForecastType
+  isCurrent: boolean
+  isAfter: boolean
+  isBefore: boolean
 }
 
 interface WeatherForecastReturn {
@@ -28,7 +26,6 @@ interface WeatherForecastReturn {
   weatherRefMap: ShallowReactive<Record<number, HTMLElement | null>>
   areaName: ComputedRef<string>
   forecastComputed: ComputedRef<ProcessedForecastItem[]>
-  getForecastStatus: (item: ProcessedForecastItem) => number
   setWeatherRef: (el: unknown, forecast: ForecastItem) => void
   calculateForecast: () => void
   copyForeastWeather: () => void
@@ -50,9 +47,13 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
   const forecastComputed = computed(() => {
     if (!forecastResult.value) return []
 
+    const nowClock = EorzeaClock.fromLocalTime(new Date())
     const processed: ProcessedForecastItem[] = forecastResult.value.forecasts.map((item) => ({
       ...item,
       show: true,
+      isCurrent: nowClock.getTime() >= item.startTimestamp && nowClock.getTime() < item.endTimestamp,
+      isBefore: nowClock.getTime() >= item.endTimestamp,
+      isAfter: nowClock.getTime() < item.startTimestamp,
       type: 'single',
     }))
 
@@ -77,14 +78,6 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
 
     return processed
   })
-
-  function getForecastStatus(item: ProcessedForecastItem): number {
-    const now = clockStore.eorzeaClock.getTime()
-    if (now >= item.startTimestamp && now < item.endTimestamp) {
-      return FORECAST_STATUS.CURRENT
-    }
-    return now < item.startTimestamp ? FORECAST_STATUS.AFTER : FORECAST_STATUS.BEFORE
-  }
 
   function setWeatherRef(el: unknown, forecast: ForecastItem): void {
     if (el instanceof HTMLElement) {
@@ -181,7 +174,7 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
   }
   function getWeatherProgress(item: ProcessedForecastItem): number {
     const now = clockStore.eorzeaClock.getTime()
-    if (getForecastStatus(item) !== FORECAST_STATUS.CURRENT) {
+    if (!item.isCurrent) {
       return 0
     }
 
@@ -226,8 +219,8 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
         if (scrollContainer) {
           if (isSilent && scrollContainer) {
             const originalBehavior = scrollContainer.style.scrollBehavior
-            scrollContainer.style.scrollBehavior = 'auto'
-            targetEl.scrollIntoView({ behavior: 'auto', inline: 'center' })
+            scrollContainer.style.scrollBehavior = 'instant'
+            targetEl.scrollIntoView({ behavior: 'instant', inline: 'center' })
             scrollContainer.style.scrollBehavior = originalBehavior
           } else {
             const scrollRect = scrollContainer.getBoundingClientRect()
@@ -239,7 +232,7 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
 
             scrollContainer.scrollTo({
               left: newScrollLeft,
-              behavior: 'auto',
+              behavior: 'smooth',
             })
           }
         }
@@ -258,7 +251,7 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
 
   onMounted(() => {
     calculateForecast()
-    resize()
+    nextTick(() => resize())
   })
 
   watch(
@@ -278,7 +271,6 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
     forecastResult,
     forecastComputed,
     weatherRefMap,
-    getForecastStatus,
     setWeatherRef,
     calculateForecast,
     copyForeastWeather,

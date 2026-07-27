@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { getIcon } from '@renderer/api/request'
-import { useWeatherForecast, WeatherForecastProps, FORECAST_STATUS } from '@renderer/hooks/useWeatherForecast'
+import { useWeatherForecast, WeatherForecastProps } from '@renderer/hooks/useWeatherForecast'
 import { WeatherInfo, WeatherRate } from '@renderer/types/eureka.type'
 
 import { EorzeaClock } from '@renderer/utils/clock.util'
@@ -11,18 +11,8 @@ const props = withDefaults(defineProps<WeatherForecastProps>(), {
   startClock: () => new EorzeaClock(),
   endClock: () => new EorzeaClock(),
 })
-const {
-  areaName,
-  weatherLock,
-  forecastComputed,
-  getForecastStatus,
-  handleLock,
-  getWeatherProgress,
-  setWeatherRef,
-  copyForeastWeather,
-  copyWeather,
-  resize,
-} = useWeatherForecast(props)
+const { areaName, weatherLock, forecastComputed, handleLock, getWeatherProgress, setWeatherRef, copyForeastWeather, copyWeather, resize } =
+  useWeatherForecast(props)
 
 const weatherList = Eureka.getAreaWeather(props.areaId)
 const weatherMap = weatherList.reduce(
@@ -66,9 +56,9 @@ defineExpose({ resize })
         :key="index"
         class="foreast-item"
         :class="{
-          'foreast-before': getForecastStatus(item) === FORECAST_STATUS.BEFORE,
-          'foreast-current': getForecastStatus(item) === FORECAST_STATUS.CURRENT,
-          'foreast-after': getForecastStatus(item) === FORECAST_STATUS.AFTER,
+          'foreast-before': item.isBefore,
+          'foreast-current': item.isCurrent,
+          'foreast-after': item.isAfter,
           'foreast-locked': weatherLock.includes(item.weather),
           'start': item.type === 'start',
           'middle': item.type === 'middle',
@@ -84,7 +74,7 @@ defineExpose({ resize })
         </div>
         <span class="foreast-lt-time">{{ item.localTimeStr }}</span>
         <span class="foreast-et">{{ item.time }}</span>
-        <div v-if="getForecastStatus(item) === FORECAST_STATUS.CURRENT" class="weather-progress-bar">
+        <div v-if="item.isCurrent" class="weather-progress-bar">
           <div class="weather-progress-fill" :style="{ width: getWeatherProgress(item) + '%' }"></div>
         </div>
       </div>

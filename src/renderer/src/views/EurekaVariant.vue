@@ -39,6 +39,10 @@ const currentWeather = computed(() => {
   return forecastWeather.value[0]?.weather || ''
 })
 
+function handleAreaChange(): void {
+  calculateForecast()
+  window.api.store.set('eurekaVariantArea', areaId.value)
+}
 function calculateForecast(): void {
   if (areaId.value && clockStore.eorzeaClock) {
     forecastWeather.value = EorzeaWeather.getExtendedForecast(areaId.value, clockStore.eorzeaClock, 5, 0)
@@ -63,7 +67,11 @@ watch(
   },
   { deep: true }
 )
-onMounted(() => {
+onMounted(async () => {
+  const eurekaVariantArea = await window.api.store.get('eurekaVariantArea')
+  if (eurekaVariantArea.success && eurekaVariantArea.data) {
+    areaId.value = eurekaVariantArea.data
+  }
   calculateForecast()
 })
 </script>
@@ -71,7 +79,7 @@ onMounted(() => {
 <template>
   <div class="w-full h-full px-1em pb-1em">
     <div class="h-3em f-center-center">
-      <select class="normal-select" v-model="areaId" @change="calculateForecast">
+      <select class="normal-select" v-model="areaId" @change="handleAreaChange">
         <option :value="item.id" v-for="item in areaList" :key="item.id">{{ item.name }}</option>
       </select>
       <input type="text" v-model="variantName" class="ml-1em normal-input" placeholder="请输入名称筛选" />

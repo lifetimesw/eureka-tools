@@ -81,14 +81,23 @@ const notTriggeredHistory = computed(() => {
   return '无'
 })
 
+function handleAreaChange(): void {
+  calculateForecast()
+  window.api.store.set('eurekaFateArea', areaId.value)
+}
+
 function copyHistory(trigger: boolean): void {
   const history = tableData.value.dataArr.filter((item) => !!item.triggerTime === trigger)
   const content = history
     .map((item) => {
       const name = item.aliases[0] ?? item.name
+      const weather = item.triggerCondition.weather
       if (item.triggerTime) {
         const minuteAfter = Math.floor((new Date().getTime() - new Date(item.triggerTime || '').getTime()) / 1000 / 60)
         return `${name}(${minuteAfter}分前)`
+      } else if (weather) {
+        const weatherName = weather ? `（${Eureka.getWeatherInfo(weather).name}）` : ''
+        return name + weatherName
       }
       return name
     })
@@ -100,7 +109,6 @@ function copyHistory(trigger: boolean): void {
     }
   })
 }
-
 function copyFate(rowData: Fate): void {
   const timeAfter = (new Date().getTime() - new Date(rowData.triggerTime || '').getTime()) / 1000
   const content = `【${rowData.name}】触发于${dayjs(rowData.triggerTime).format('YYYY-MM-DD HH:mm')}，已经过去${Math.floor(timeAfter / 60)}分。`
@@ -168,7 +176,11 @@ watch(triggerMap, (newMap) => {
   window.api.store.set('eurekaTrigger', toRaw(newMap))
 })
 onMounted(async () => {
+  const eurekaFateArea = await window.api.store.get('eurekaFateArea')
   const tMap = await window.api.store.get('eurekaTrigger')
+  if (eurekaFateArea.success && eurekaFateArea.data) {
+    areaId.value = eurekaFateArea.data
+  }
   if (tMap.success && tMap.data) {
     Object.keys(triggerMap).forEach((key) => {
       triggerMap[key] = tMap.data[key] ?? {}
@@ -181,7 +193,7 @@ onMounted(async () => {
 <template>
   <div class="w-full h-full px-1em pb-1em">
     <div class="h-3em f-center-center gap-2">
-      <select v-model="areaId" class="normal-select" @change="calculateForecast">
+      <select v-model="areaId" class="normal-select" @change="handleAreaChange">
         <option v-for="item in areaList" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
       <div class="gap-2 if-start-start">

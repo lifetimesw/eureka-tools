@@ -35,8 +35,9 @@ onMounted(async () => {
         </div>
         <div class="f-start">
           <div class="w-6em text-#5b6e8c">开源地址</div>
-          <div class="fw-500">
-            <a class="link" @click="openUrl('https://github.com/lifetimesw/eureka-tools')">eureka-tools</a>
+          <div class="fw-500 link">
+            <a @click="openUrl('https://github.com/lifetimesw/eureka-tools')">eureka-tools</a>
+            <i class="icon-s ml-1 i-lucide:square-arrow-out-up-right"></i>
           </div>
         </div>
       </div>

@@ -70,8 +70,6 @@ function resetTime(): void {
 watch([startTime, endTime], () => {
   updateTimeRange()
 })
-setDefaultTimeRange()
-
 watch(
   () => clockStore.eorzeaClock,
   (newClock: EorzeaClock, oldClock: EorzeaClock) => {
@@ -86,6 +84,8 @@ watch(
     }
   }
 )
+
+setDefaultTimeRange()
 
 const weatherRefs = shallowRef<WeatherForecastInstance[]>([])
 function resize(): void {

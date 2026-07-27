@@ -3,12 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import constants from '@renderer/api/constants'
-import { getIcon } from '@renderer/api/request'
+import errorImg from '@renderer/assets/images/060042.png'
 
 function handleError(event: Event): void {
   const img = event.target as HTMLImageElement
-  img.src = getIcon(constants.unknownIcon)
+  img.src = errorImg
   img.onerror = null
 }
 </script>

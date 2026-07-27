@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { createCalendar, Day } from '@renderer/utils/date.util'
+import { useElementBounding } from '@vueuse/core'
 import type { StyleValue } from 'vue'
 
 interface TimeProps {
-  type: 'minute' | 'hour' | 'day' | 'month' | 'year'
+  type: 'minute' | 'day' | 'month' | 'year'
   modelValue: string
 }
 const props = withDefaults(defineProps<TimeProps>(), {
@@ -19,6 +20,13 @@ const monthArr = [
   ['07', '08', '09'],
   ['10', '11', '12'],
 ]
+const formatType = {
+  year: 'YYYY',
+  month: 'YYYY-MM',
+  day: 'YYYY-MM-DD',
+  minute: 'YYYY-MM-DD HH:mm',
+}
+
 const now = new Date()
 const dateSelect = reactive({
   year: now.getFullYear(),
@@ -44,31 +52,30 @@ const dayArr = computed(() => {
   return createCalendar(dateSelect.year ?? 0, dateSelect.month ?? 0)
 })
 
-const iconRef = shallowRef()
-const pickerRef = shallowRef()
-const yearRef = shallowRef()
-const dateRef = shallowRef()
-const hourRef = shallowRef()
-const minuteRef = shallowRef()
-const dateTimeDateRef = shallowRef()
-const dateTimeTimeRef = shallowRef()
-const minuteWindowRef = shallowRef()
-const hourWindowRef = shallowRef()
-const dayWindowRef = shallowRef()
-const monthWindowRef = shallowRef()
+const iconRef = useTemplateRef('iconRef')
+const pickerRef = useTemplateRef('pickerRef')
+const yearRef = useTemplateRef('yearRef')
+const hourRef = useTemplateRef('hourRef')
+const minuteRef = useTemplateRef('minuteRef')
+const dateTimeDateRef = useTemplateRef('dateTimeDateRef')
+const dateTimeTimeRef = useTemplateRef('dateTimeTimeRef')
+const minuteWindowRef = useTemplateRef('minuteWindowRef')
+const dayWindowRef = useTemplateRef('dayWindowRef')
+const monthWindowRef = useTemplateRef('monthWindowRef')
+const yearWindowRef = useTemplateRef('yearWindowRef')
 const windowRef = computed(() => {
   switch (props.type) {
     case 'minute': {
       return minuteWindowRef.value
-    }
-    case 'hour': {
-      return hourWindowRef.value
     }
     case 'day': {
       return dayWindowRef.value
     }
     case 'month': {
       return monthWindowRef.value
+    }
+    case 'year': {
+      return yearWindowRef.value
     }
     default: {
       return null
@@ -83,6 +90,7 @@ function getComputedRect(element: HTMLElement): { width: number; height: number 
   return { width, height }
 }
 function setWindowPosition(): void {
+  if (!iconRef.value || !pickerRef.value || !windowRef.value) return
   const position: StyleValue = {}
   const iconRect = iconRef.value.getBoundingClientRect()
   const pickerRect = pickerRef.value.getBoundingClientRect()
@@ -114,6 +122,7 @@ function showWindow(): void {
         nextTick(() => {
           timeRef.style.height = dateRef.clientHeight + 'px'
           setWindowPosition()
+          if (!hourRef.value || !minuteRef.value) return
           const hourEl = hourRef.value.children[dateSelect.hour ?? 0]
           const minuteEl = minuteRef.value.children[dateSelect.minute ?? 0]
           if (hourEl) {
@@ -128,6 +137,7 @@ function showWindow(): void {
       setWindowPosition()
       if (props.type === 'month') {
         nextTick(() => {
+          if (!yearRef.value) return
           const index = yearArr.value.findIndex((item) => item === dateSelect.year)
           const cYearEl = yearRef.value.children[index]
           cYearEl.scrollIntoView({ behavior: 'auto', block: 'center' })
@@ -144,17 +154,16 @@ function selectMinute(minute: number): void {
   dateSelect.minute = minute
   updateDate()
 }
-function selectDay(day: number): void {
-  dateSelect.day = day
+function selectDay(dayData: Day): void {
+  dateSelect.year = dayData.year
+  dateSelect.month = dayData.month
+  dateSelect.day = dayData.day
   updateDate()
-  if (props.type === 'hour') {
-    currentWindow.value = ''
-  }
 }
 function selectMonth(month: number): void {
   dateSelect.month = month
+  dateSelect.day = Math.min(dateSelect.day, new Date(dateSelect.year, dateSelect.month, 0).getDate())
   updateDate()
-  currentWindow.value = ''
 }
 function selectYear(year: number): void {
   dateSelect.year = year
@@ -162,26 +171,10 @@ function selectYear(year: number): void {
   currentWindow.value = ''
 }
 function updateDate(): void {
-  const year = dateSelect.year
-  const month = dateSelect.month?.toString().padStart(2, '0')
-  const day = dateSelect.day?.toString().padStart(2, '0')
-  const hour = dateSelect.hour?.toString().padStart(2, '0')
-  const minute = dateSelect.minute?.toString().padStart(2, '0')
-  let currentDate = ''
-  switch (props.type) {
-    case 'month':
-      currentDate = `${year}`
-      break
-    case 'day':
-      currentDate = `${year}-${month}`
-      break
-    case 'hour':
-      currentDate = `${year}-${month}-${day}`
-      break
-    case 'minute':
-      currentDate = `${year}-${month}-${day} ${hour}:${minute}`
-      break
-  }
+  const date = new Date(dateSelect.year, (dateSelect.month ?? 1) - 1, dateSelect.day ?? 1, dateSelect.hour ?? 0, dateSelect.minute ?? 0)
+
+  let currentDate = formatType[props.type] ? dayjs(date).format(formatType[props.type]) : ''
+
   emit('update:modelValue', currentDate)
 }
 
@@ -206,33 +199,33 @@ watch(
   { immediate: true }
 )
 
-function handleClickFn(event: Event): void {
-  if (currentWindow.value && !dateRef.value.contains(event.target) && windowRef.value && !windowRef.value.contains(event.target)) {
+const { x: pickerX, y: pickerY } = useElementBounding(pickerRef)
+watch([pickerX, pickerY], () => {
+  if (currentWindow.value) {
     currentWindow.value = ''
   }
-}
-function hideFn(event: Event): void {
-  if (currentWindow.value && !dateRef.value.contains(event.target) && windowRef.value && !windowRef.value.contains(event.target)) {
+})
+function handleClickFn(event: Event): void {
+  const targetEl = event.target as HTMLElement | null
+  if (currentWindow.value && !pickerRef.value?.contains(targetEl) && windowRef.value && !windowRef.value.contains(targetEl)) {
     currentWindow.value = ''
   }
 }
 
 onMounted(() => {
   document.addEventListener('click', handleClickFn)
-  document.addEventListener('scroll', hideFn, true)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickFn)
-  document.removeEventListener('scroll', hideFn, true)
 })
 </script>
 <template>
-  <div ref="dateRef" class="stone-time">
-    <div ref="pickerRef" class="yds-picker" :class="[`${type}-picker`]">
+  <div class="stone-time">
+    <div ref="pickerRef" class="stone-time-picker" :class="[`${type}-picker`]" @click="showWindow">
       <div ref="iconRef" class="icon-date">
         <i class="icon i-lucide:calendar"></i>
       </div>
-      <span class="picker-date" @click="showWindow">{{ showDate }}</span>
+      <span class="picker-date">{{ showDate }}</span>
     </div>
     <Teleport to="body">
       <div
@@ -249,7 +242,7 @@ onBeforeUnmount(() => {
                 <option v-for="(item, index) in yearArr" :key="index" :value="item">{{ item }}</option>
               </select>
               <span>年</span>
-              <select v-model="dateSelect.month" class="month-select">
+              <select v-model="dateSelect.month" class="month-select" @change="selectMonth(dateSelect.month)">
                 <option v-for="(item, index) in 12" :key="index" :value="item">
                   {{ item }}
                 </option>
@@ -269,10 +262,9 @@ onBeforeUnmount(() => {
                 <tr v-for="(week, index) in dayArr" :key="index">
                   <td v-for="(dItem, dIndex) in week" :key="`${index}_${dIndex}`">
                     <span
-                      v-if="dItem.isCurrentMonth"
-                      class="current-month"
-                      :class="{ active: isCurrent(dItem), today: isToday(dItem) }"
-                      @click="selectDay(dItem.day)">
+                      class="day"
+                      :class="{ 'current-month': dItem.isCurrentMonth, 'active': isCurrent(dItem), 'today': isToday(dItem) }"
+                      @click="selectDay(dItem)">
                       {{ dItem.day }}
                     </span>
                   </td>
@@ -294,7 +286,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
-      <div v-if="type === 'hour'" v-show="currentWindow === 'hour'" ref="hourWindowRef" class="stone-time-window-hour" :style="windowPosition">
+      <div v-if="type === 'day'" v-show="currentWindow === 'day'" ref="dayWindowRef" class="stone-time-window-hour" :style="windowPosition">
         <div class="date-select">
           <select v-model="dateSelect.year" style="width: 5em">
             <option v-for="(item, index) in yearArr" :key="index" :value="item">{{ item }}</option>
@@ -318,20 +310,18 @@ onBeforeUnmount(() => {
               <tr v-for="(week, index) in dayArr" :key="index">
                 <td v-for="(dItem, dIndex) in week" :key="`${index}_${dIndex}`">
                   <span
-                    v-if="dItem.isCurrentMonth"
-                    class="current-month"
-                    :class="{ active: dItem.date === modelValue }"
-                    @click="selectDay(dItem.day)">
+                    class="day"
+                    :class="{ 'current-month': dItem.isCurrentMonth, 'active': isCurrent(dItem), 'today': isToday(dItem) }"
+                    @click="selectDay(dItem)">
                     {{ dItem.day }}
                   </span>
-                  <!-- <span v-else>{{ dItem.day }}</span> -->
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <div v-else-if="type === 'day'" v-show="currentWindow === 'day'" ref="dayWindowRef" class="stone-time-window-day" :style="windowPosition">
+      <div v-else-if="type === 'month'" v-show="currentWindow === 'month'" ref="monthWindowRef" class="stone-time-window-day" :style="windowPosition">
         <div class="year-switch">
           <div class="pre-year" @click="dateSelect.year--" />
           <span>{{ dateSelect.year }}</span>
@@ -351,12 +341,7 @@ onBeforeUnmount(() => {
           </table>
         </div>
       </div>
-      <div
-        v-else-if="type === 'month'"
-        v-show="currentWindow === 'month'"
-        ref="monthWindowRef"
-        class="stone-time-window-month"
-        :style="windowPosition">
+      <div v-else-if="type === 'year'" v-show="currentWindow === 'year'" ref="yearWindowRef" class="stone-time-window-month" :style="windowPosition">
         <ul ref="yearRef">
           <li v-for="(item, index) in yearArr" :key="index" :class="{ active: item === Number(modelValue) }" @click="selectYear(item)">
             {{ item }}
