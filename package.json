@@ -1,7 +1,7 @@
 {
   "name": "eureka-tools",
   "productName": "Eureka Tools",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "A simple app to find eureka weather",
   "main": "./out/main/index.js",
   "author": "example.com",
