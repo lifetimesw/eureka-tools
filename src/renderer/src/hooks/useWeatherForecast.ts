@@ -18,6 +18,7 @@ interface ProcessedForecastItem extends ForecastItem {
   isCurrent: boolean
   isAfter: boolean
   isBefore: boolean
+  ignoreGap: number
 }
 
 interface WeatherForecastReturn {
@@ -55,6 +56,7 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
       isBefore: nowClock.getTime() >= item.endTimestamp,
       isAfter: nowClock.getTime() < item.startTimestamp,
       type: 'single',
+      ignoreGap: 0,
     }))
 
     if (weatherLock.length) {
@@ -62,6 +64,9 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
         item.show = weatherLock.includes(item.weather)
       })
     }
+
+    const result: ProcessedForecastItem[] = []
+
     processed.forEach((item, index) => {
       const prevItem = index > 0 ? processed[index - 1] : null
       const nextItem = index < processed.length - 1 ? processed[index + 1] : null
@@ -74,9 +79,21 @@ export function useWeatherForecast(props: WeatherForecastProps): WeatherForecast
       } else if (isConnectedToNext) {
         item.type = 'start'
       }
+
+      const lastResult = result[result.length - 1]
+      if (item.show) {
+        result.push(item)
+      } else {
+        if (!lastResult || lastResult.show) {
+          item.ignoreGap++
+          result.push(item)
+        } else {
+          lastResult.ignoreGap++
+        }
+      }
     })
 
-    return processed
+    return result
   })
 
   function setWeatherRef(el: unknown, forecast: ForecastItem): void {

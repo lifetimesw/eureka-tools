@@ -49,35 +49,39 @@ defineExpose({ resize })
       </div>
     </div>
     <div class="area-foreasts custom-scroll">
-      <div
-        v-for="(item, index) in forecastComputed"
-        v-show="item.show"
-        :ref="(el) => setWeatherRef(el, item)"
-        :key="index"
-        class="foreast-item"
-        :class="{
-          'foreast-before': item.isBefore,
-          'foreast-current': item.isCurrent,
-          'foreast-after': item.isAfter,
-          'foreast-locked': weatherLock.includes(item.weather),
-          'start': item.type === 'start',
-          'middle': item.type === 'middle',
-          'end': item.type === 'end',
-          'single': item.type === 'single',
-        }"
-        @click="handleLock(item.weather)"
-        @contextmenu.prevent.stop="copyWeather(item, index)">
-        <span class="foreast-lt-date">{{ item.localDateStr }}</span>
-        <div class="foreast-weather">
-          <img class="icon mr-1" :src="getIcon(item.icon)" />
-          <span>{{ item.name }}</span>
+      <template v-for="(item, index) in forecastComputed" :key="index">
+        <div
+          v-if="item.show"
+          :ref="(el) => setWeatherRef(el, item)"
+          class="foreast-item"
+          :class="{
+            'foreast-before': item.isBefore,
+            'foreast-current': item.isCurrent,
+            'foreast-after': item.isAfter,
+            'foreast-locked': weatherLock.includes(item.weather),
+            'start': item.type === 'start',
+            'middle': item.type === 'middle',
+            'end': item.type === 'end',
+            'single': item.type === 'single',
+          }"
+          @click="handleLock(item.weather)"
+          @contextmenu.prevent.stop="copyWeather(item, index)">
+          <span class="foreast-lt-date">{{ item.localDateStr }}</span>
+          <div class="foreast-weather">
+            <img class="icon mr-1" :src="getIcon(item.icon)" />
+            <span>{{ item.name }}</span>
+          </div>
+          <span class="foreast-lt-time">{{ item.localTimeStr }}</span>
+          <span class="foreast-et">{{ item.time }}</span>
+          <div v-if="item.isCurrent" class="weather-progress-bar">
+            <div class="weather-progress-fill" :style="{ width: getWeatherProgress(item) + '%' }"></div>
+          </div>
         </div>
-        <span class="foreast-lt-time">{{ item.localTimeStr }}</span>
-        <span class="foreast-et">{{ item.time }}</span>
-        <div v-if="item.isCurrent" class="weather-progress-bar">
-          <div class="weather-progress-fill" :style="{ width: getWeatherProgress(item) + '%' }"></div>
+        <div class="foreast-ignore" v-else>
+          <span class="arrow">...</span>
+          <span class="count">{{ item.ignoreGap }}</span>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -113,7 +117,7 @@ defineExpose({ resize })
       position: relative;
       width: 6em;
       height: 6em;
-      margin: 0 0.2em;
+      margin: 0 0.1em;
       padding-bottom: 0.5em;
       vertical-align: top;
       border: 1px solid #d8e0eb;
@@ -201,6 +205,24 @@ defineExpose({ resize })
         margin-left: 0;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
+      }
+    }
+    .foreast-ignore {
+      @include inline-flex(center, center, column);
+      width: 2em;
+      height: 6em;
+      margin: 0 0.1em;
+      border: 1px dashed #94a3b8;
+      border-radius: 0.5em;
+      background: #f8fafc;
+      color: #64748b;
+      user-select: none;
+      transition: all 0.2s linear;
+      .arrow {
+        font-size: 0.875rem;
+      }
+      .count {
+        font-size: 0.875rem;
       }
     }
   }
